@@ -36,6 +36,8 @@ public class Parser
     private Token previousToken;
     private static boolean signSet = false;
     private static String signFlag = "+";
+   
+    private static int previousType = 0; // The most recent type keyword (Token.INT or Token.STRING)
 
     public Parser()
     {
@@ -135,8 +137,12 @@ public class Parser
     // New method added to match "int" or "string" in type declarations
     private void type() {
     	int tokenType = currentToken.getType();
-    	if (tokenType != Token.INT && tokenType != Token.STRING)
-    		error(tokenType);
+    	if (tokenType == Token.INT)
+         previousType = Token.INT;
+      else if (tokenType == Token.STRING)
+         previousType = Token.STRING;
+      else
+    		error(tokenType); // Invalid type keyword
     }
    
     private void idList()
@@ -323,7 +329,7 @@ public class Parser
                               scanner.getLineNumber() );
            else {
               // Do proper declaration here:
-              symbolTable.addItem( previousToken );
+              symbolTable.addItem( previousToken, previousType );
               codeFactory.generateDeclaration( previousToken );
            }
         }
