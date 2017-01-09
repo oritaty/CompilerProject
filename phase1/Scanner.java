@@ -143,7 +143,7 @@ public class Scanner
         else if (currentLine.charAt(i) == '"') {
             tokenStr = "stringLtrl";
             tokenType = Token.STRINGLITERAL;
-            i = nextQuot(currentLine, i);
+            i = nextQuot(currentLine, i) + 1;
         }
         //to here
         
