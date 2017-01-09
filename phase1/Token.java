@@ -38,7 +38,7 @@ public class Token
             else if ( temp.compareTo("write") == 0) type = WRITE;
             else if ( temp.compareTo("declare") == 0) type = DECLARE;
             else if ( temp.compareTo("int") == 0) type = INT;
-            else if ( temp.compareTo("sring") == 0) type = STRING;
+            else if ( temp.compareTo("string") == 0) type = STRING;
         }
     }
     public String getId()
