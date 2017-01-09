@@ -91,7 +91,7 @@ public class Parser
         {
             case Token.ID:
             {
-                lValue = identifier();
+                lValue = identifier(false);
                 match( Token.ASSIGNOP );
                 expr = expression();
                 codeFactory.generateAssignment( lValue, expr );
@@ -116,6 +116,18 @@ public class Parser
                 match( Token.SEMICOLON );
                 break;
             }
+            case Token.DECLARE :
+            {
+                match( Token.DECLARE);
+                match( Token.LPAREN );
+                type();
+                int declareType = previousToken.getType();
+                lValue = identifier(true);
+                // TODO: match optional initialization
+                match( Token.RPAREN );
+                match( Token.SEMICOLON );
+                break;
+            }
             default: error(currentToken);
         }
     }
@@ -135,7 +147,7 @@ public class Parser
         while ( currentToken.getType() == Token.COMMA )
         {
             match(Token.COMMA);
-            idExpr = identifier();
+            idExpr = identifier(false);
             codeFactory.generateRead(idExpr);
         }
     }
@@ -237,11 +249,11 @@ public class Parser
         return op;
     }
     
-    private Expression identifier()
+    private Expression identifier(boolean declaring)
     {
         Expression expr;
         match( Token.ID );
-        expr = processIdentifier();
+        expr = processIdentifier(declaring);
         return expr;
     }
     
@@ -292,14 +304,28 @@ public class Parser
         return op;
     }
     
-    private Expression processIdentifier()
+    private Expression processIdentifier(boolean declaring)
     {
         Expression expr = new Expression( Expression.IDEXPR, previousToken.getId());
         
-        if ( ! symbolTable.checkSTforItem( previousToken.getId() ) )
+        if ( ! symbolTable.checkSTforItem( previousToken.getId() ) && !declaring )
         {
-            symbolTable.addItem( previousToken );
-            codeFactory.generateDeclaration( previousToken );
+            /*symbolTable.addItem( previousToken );
+            codeFactory.generateDeclaration( previousToken );*/ // This code previously declared variables automatically
+           
+           // Now, give an error if this isn't a declaration statement and the variable hasn't been declared yet.
+           System.out.println("Identifier error! " + previousToken.getId() + " has not been declared at line number " +
+                              scanner.getLineNumber() );
+        } else if (declaring) {
+           if (symbolTable.checkSTforItem( previousToken.getId() ))
+              // Give the reverse error: the variable name is already used.
+              System.out.println("Identifier error! Variable name '" + previousToken.getId() + "' is already declared at line number " +
+                              scanner.getLineNumber() );
+           else {
+              // Do proper declaration here:
+              symbolTable.addItem( previousToken );
+              codeFactory.generateDeclaration( previousToken );
+           }
         }
         return expr;
     }
