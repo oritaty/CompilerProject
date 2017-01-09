@@ -135,14 +135,14 @@ public class Parser
     // New method added to match "int" or "string" in type declarations
     private void type() {
     	int tokenType = currentToken.getType();
-    	if (!tokenType == Token.INT && !tokenType == Token.STRING)
+    	if (tokenType != Token.INT && tokenType != Token.STRING)
     		error(tokenType);
     }
    
     private void idList()
     {
         Expression idExpr;
-        idExpr = identifier();
+        idExpr = identifier(false);
         codeFactory.generateRead(idExpr);
         while ( currentToken.getType() == Token.COMMA )
         {
@@ -197,7 +197,7 @@ public class Parser
             }
             case Token.ID:
             {
-                result = identifier();
+                result = identifier(false);
                 break;
             }
             case Token.INTLITERAL:
