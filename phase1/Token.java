@@ -19,6 +19,8 @@ public class Token
     public final static int MINUS = 12;
     public final static int INTLITERAL = 13;
     public final static int EOF = 14;
+    public final static int INT = 15; //Added
+    public final static int STRING = 16; //Added
 
     public Token( String tokenString, int tokenType)
     {
@@ -61,6 +63,8 @@ public class Token
             case MINUS : str = "MINUS"; break;
             case INTLITERAL : str = "INTLITERAL"; break;
             case EOF : str = "EOF"; break;
+            case INT : str = "INT"; break; //Added
+            case STRING : str = "STRING"; break; //Added
             default: str = "Lexical Error";
         }
         return str;
