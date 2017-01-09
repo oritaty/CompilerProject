@@ -21,6 +21,10 @@ class SymbolTable
         public String getId() {
             return this.id;
         }
+        
+        public void setInitValue( Object value ) {
+            this.initValue = value;
+        }
     }
     
     private Vector<Symbol> st;
@@ -32,7 +36,7 @@ class SymbolTable
     
     public void addItem( Token token, int type )
     {
-        st.add( new Symbol( token.getID(), type) );
+        st.add( new Symbol( token.getId(), type) );
     }
     
     public boolean checkSTforItem( String id )
@@ -42,6 +46,16 @@ class SymbolTable
                return true;
        }
        return false;
+    }
+    
+    // Add an initial value to the symbol table entry for a certain id
+    public void initVariable( String id, Object value )
+    {
+        for (Symbol s : st) {
+           if (s.getId().equals(id)) {
+               s.setInitValue(value);
+           }
+        }
     }
 
 }
