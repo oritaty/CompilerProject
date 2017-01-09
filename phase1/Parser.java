@@ -124,12 +124,39 @@ public class Parser
                 match( Token.LPAREN );
                 type();
                 int declareType = previousToken.getType();
-                lValue = identifier(true);
+                lValue = identifier(true); // The variable being declared
+                Token varToken = previousToken;
+                
+                symbolTable.addItem(varToken, declareType);
                 
                 if (currentToken.getType() == Token.ASSIGNOP) {
                    match( Token.ASSIGNOP );
-                   expr = expression();
-                   // TODO: compile-time initialization, if possible
+                   if (currentToken.getType() == Token.STRINGLITERAL) {
+                	   // Initializing with string literal
+                	   if (declareType != Token.STRING)
+                		   System.out.println("Type error! Cannot initialize non-string variable to a string at line "
+                				   + scanner.getLineNumber());
+                	   
+                	   match( Token.STRINGLITERAL );
+                	   codeFactory.generateDeclaration( varToken );	// TODO: Handle initialization of string
+                   } else if (currentToken.getType() == Token.INTLITERAL) {
+                	   // Initializing with int literal
+                	   if (declareType != Token.INT)	// TODO: Check if negatives work here
+                		   System.out.println("Type error! Cannot initialize non-int variable to an int at line "
+                				   + scanner.getLineNumber());
+                	   
+                	   match( Token.INTLITERAL );
+                	   codeFactory.generateDeclaration( varToken ); // TODO: Handle initialization of int
+                   } else {
+                	   // Trying to initialize to something that isn't a literal
+                	   System.out.println("Initialization error! Variable must be initialized to a literal at line "
+                			   + scanner.getLineNumber());
+                   }
+                	   
+                } else {
+                    // No initialization, declare as default
+                    symbolTable.addItem( previousToken, previousType );
+                    codeFactory.generateDeclaration( previousToken );
                 }
                    
                
@@ -332,16 +359,12 @@ public class Parser
            // Now, give an error if this isn't a declaration statement and the variable hasn't been declared yet.
            System.out.println("Identifier error! " + previousToken.getId() + " has not been declared at line number " +
                               scanner.getLineNumber() );
-        } else if (declaring) {
+        } else if (declaring && symbolTable.checkSTforItem( previousToken.getId() )) {
            if (symbolTable.checkSTforItem( previousToken.getId() ))
               // Give the reverse error: the variable name is already used.
               System.out.println("Identifier error! Variable name '" + previousToken.getId() + "' is already declared at line number " +
                               scanner.getLineNumber() );
-           else {
-              // Do proper declaration here:
-              symbolTable.addItem( previousToken, previousType );
-              codeFactory.generateDeclaration( previousToken );
-           }
+
         }
         return expr;
     }
