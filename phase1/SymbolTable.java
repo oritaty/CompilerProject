@@ -17,6 +17,14 @@ class SymbolTable
             this.type = type;
             this.initValue = value;
         }*/
+        public String toString() {
+         String rtn = "id=" + this.id + ", type=" + this.type;
+            if (this.initValue != null) {
+                rtn += ", init=" + this.initValue;
+            }
+            rtn += "\n";
+            return rtn;
+        }
         
         public String getId() {
             return this.id;
