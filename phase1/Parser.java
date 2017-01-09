@@ -78,7 +78,7 @@ public class Parser
     private void statementList()
     {
         while ( currentToken.getType() == Token.ID || currentToken.getType() == Token.READ || 
-                    currentToken.getType() == Token.WRITE)
+                    currentToken.getType() == Token.WRITE || currentToken.getType() == Token.DECLARE)
         {
             statement();
         }
