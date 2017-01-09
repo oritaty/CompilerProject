@@ -22,6 +22,8 @@ public class Token
     public final static int INT = 15; //Added
     public final static int STRING = 16; //Added
     public final static int CONCAT = 17; //Added
+    public final static int STRINGLITERAL = 18; //Added
+    public final static int DECLARE = 19; //Added
 
     public Token( String tokenString, int tokenType)
     {
@@ -67,6 +69,8 @@ public class Token
             case INT : str = "INT"; break; //Added
             case STRING : str = "STRING"; break; //Added
             case CONCAT : str = "CONCAT"; break; //Added
+            case STRINGLITERAL : str = "STRINGLITERAL"; break; //Added
+            case DECLARE : str = "DECLARE"; break; //Added
             default: str = "Lexical Error";
         }
         return str;
