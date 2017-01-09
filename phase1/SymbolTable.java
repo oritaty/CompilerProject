@@ -33,6 +33,10 @@ class SymbolTable
         public void setInitValue( Object value ) {
             this.initValue = value;
         }
+        
+        public int getType() {
+        	return this.type;
+        }
     }
     
     private Vector<Symbol> st;
@@ -72,6 +76,16 @@ class SymbolTable
         for (Symbol s : st) {
             System.out.println(s.toString());
         }
+    }
+    
+    // Get the type (Token.INT or Token.STRING) of a variable
+    public int getType( String id ) {
+    	for (Symbol s : st) {
+            if (s.getId().equals(id)) {
+                return s.getType();
+            }
+        }
+    	return 0;
     }
 
 }
