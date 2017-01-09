@@ -118,7 +118,22 @@ public class Scanner
             tokenStr = ":=";
             tokenType = Token.ASSIGNOP;
             i+=2;
-        } else  if ( Character.isDigit((currentLine.charAt(i))) )// find literals
+        } 
+        
+        //Added from here
+        else if (i+2 < len && currentLine.substring(0, 3).equals("int")) {
+            tokenStr = "int";
+            tokenType = Token.INT;
+            i+=2;
+        }
+        
+        else if (i+5 < len && currentLine.substring(0, 6).equals("string")) {
+            tokenStr = "string";
+            tokenType = Token.STRING;
+            i+=2;
+        } //to here
+        
+        else  if ( Character.isDigit((currentLine.charAt(i))) )// find literals
         {
             while ( i < len && Character.isDigit(currentLine.charAt(i)) )
             {
