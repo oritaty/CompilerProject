@@ -133,13 +133,13 @@ public class Scanner
             tokenStr = "int";
             tokenType = Token.INT;
             i+=3;
-        }*/
+        }
         
         else if (i+5 < len && currentLine.substring(0, 6).equals("string")) {
             tokenStr = "string";
             tokenType = Token.STRING;
             i+=6;
-        } 
+        }*/
         
         else if (currentLine.charAt(i) == '"') {
             tokenStr = "stringLtrl";
