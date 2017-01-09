@@ -141,9 +141,10 @@ public class Scanner
             i+=6;
         }*/
         
-        else if (currentLine.charAt(i) == '"') {
-            tokenStr = "stringLtrl";
+        else if (currentLine.charAt(i) == '"' && i+1 < len) {
+            //tokenStr = "STRINGLITERAL";
             tokenType = Token.STRINGLITERAL;
+            tokenStr = currentLine.substring(i + 1, nextQuot(currentLine, i));
             i = nextQuot(currentLine, i) + 1;
         }
         //to here
