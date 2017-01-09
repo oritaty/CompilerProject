@@ -21,6 +21,7 @@ public class Token
     public final static int EOF = 14;
     public final static int INT = 15; //Added
     public final static int STRING = 16; //Added
+    public final static int CONCAT = 17; //Added
 
     public Token( String tokenString, int tokenType)
     {
@@ -65,6 +66,7 @@ public class Token
             case EOF : str = "EOF"; break;
             case INT : str = "INT"; break; //Added
             case STRING : str = "STRING"; break; //Added
+            case CONCAT : str = "CONCAT"; break; //Added
             default: str = "Lexical Error";
         }
         return str;
