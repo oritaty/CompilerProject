@@ -128,11 +128,12 @@ public class Scanner
             i+=2;
         } 
         
+        /*
         else if (i+2 < len && currentLine.substring(0, 3).equals("int")) {
             tokenStr = "int";
             tokenType = Token.INT;
             i+=3;
-        }
+        }*/
         
         else if (i+5 < len && currentLine.substring(0, 6).equals("string")) {
             tokenStr = "string";
