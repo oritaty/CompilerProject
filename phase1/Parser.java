@@ -137,10 +137,13 @@ public class Parser
     // New method added to match "int" or "string" in type declarations
     private void type() {
     	int tokenType = currentToken.getType();
-    	if (tokenType == Token.INT)
+    	if (tokenType == Token.INT) {
          previousType = Token.INT;
-      else if (tokenType == Token.STRING)
+         match (Token.INT);
+      } else if (tokenType == Token.STRING) {
          previousType = Token.STRING;
+         match (Token.STRING);
+      }
       else
     		error(tokenType); // Invalid type keyword
     }
