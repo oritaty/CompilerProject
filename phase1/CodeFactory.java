@@ -263,6 +263,7 @@ class CodeFactory {
 		System.out.println("__minus:  .byte '-'");
 		System.out.println("__negOne: .int -1");
 		System.out.println("__negFlag: .byte '+'");
+		System.out.println("a:	.int	0");
 	}
 
 	private String createTempName() {
