@@ -50,6 +50,12 @@ public class Scanner
     
     public Token findNextToken()
     {
+    	if (currentLine == null)
+    	{
+    		Token token = new Token( "", Token.EOF );
+            return token;
+    	}
+    	
         int len = currentLine.length();
         String tokenStr = new String();
         int tokenType;
