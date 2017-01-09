@@ -65,5 +65,12 @@ class SymbolTable
            }
         }
     }
+    
+    //For test purpose.
+    public void printAll() {
+        for (Symbol s : st) {
+            System.out.println(s.toString());
+        }
+    }
 
 }
