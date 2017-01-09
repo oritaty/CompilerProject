@@ -46,7 +46,7 @@ public class Parser
     {
         Parser parser = new Parser();
       //  scanner = new Scanner( args[0]);
-        scanner = new Scanner( "test");
+        scanner = new Scanner( "test.txt");
         codeFactory = new CodeFactory();
         symbolTable = new SymbolTable();
         parser.parse();
