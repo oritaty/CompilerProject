@@ -121,16 +121,23 @@ public class Scanner
         } 
         
         //Added from here
+        else if (currentLine.charAt(i) == '|'  && i+1 < len && currentLine.charAt(i+1) == '|')
+        {
+            tokenStr = "||";
+            tokenType = Token.CONCAT;
+            i+=2;
+        } 
+        
         else if (i+2 < len && currentLine.substring(0, 3).equals("int")) {
             tokenStr = "int";
             tokenType = Token.INT;
-            i+=2;
+            i+=3;
         }
         
         else if (i+5 < len && currentLine.substring(0, 6).equals("string")) {
             tokenStr = "string";
             tokenType = Token.STRING;
-            i+=2;
+            i+=6;
         } //to here
         
         else  if ( Character.isDigit((currentLine.charAt(i))) )// find literals
