@@ -221,9 +221,9 @@ class CodeFactory {
 		System.out.println(readLoopEndLabel + ":\n");
 		System.out.println("\tcmpb $'-', __negFlag");
 		System.out.println("\tjne " + readEndLabel);
-		System.out.println("\tmovl a, %eax");
+		System.out.println("\tmovl " + idName + ", %eax");
 		System.out.println("\tmull __negOne");
-		System.out.println("\tmovl %eax, a");
+		System.out.println("\tmovl %eax, " + idName);
 		System.out.println("\tmovb $'+', __negFlag");
 		System.out.println(readEndLabel + ":\n");
 
@@ -263,7 +263,6 @@ class CodeFactory {
 		System.out.println("__minus:  .byte '-'");
 		System.out.println("__negOne: .int -1");
 		System.out.println("__negFlag: .byte '+'");
-		System.out.println("a:	.int	0");
 	}
 
 	private String createTempName() {
