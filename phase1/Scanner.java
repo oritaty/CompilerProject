@@ -138,7 +138,14 @@ public class Scanner
             tokenStr = "string";
             tokenType = Token.STRING;
             i+=6;
-        } //to here
+        } 
+        
+        else if (currentLine.charAt(i) == '"') {
+            tokenStr = "stringLtrl";
+            tokenType = Token.STRINGLITERAL;
+            i = nextQuot(currentLine, i);
+        }
+        //to here
         
         else  if ( Character.isDigit((currentLine.charAt(i))) )// find literals
         {
@@ -177,6 +184,18 @@ public class Scanner
         }
 //        if (currentLine == null) done = true;  // reached EOF
         return token;
+    }
+    
+    //Jump to the index of next quotation mark;
+    int nextQuot(String str, int currentIndex) {
+        currentIndex++; //Start from one character behind.
+        while (currentIndex < str.length()) {
+            if (str.charAt(currentIndex) == '"') {
+                break;
+            }
+            currentIndex++;
+        }
+        return currentIndex;
     }
  
     boolean isReservedSymbol( char ch)
