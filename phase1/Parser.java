@@ -125,7 +125,14 @@ public class Parser
                 type();
                 int declareType = previousToken.getType();
                 lValue = identifier(true);
-                // TODO: match optional initialization
+                
+                if (currentToken.getType() == Token.ASSIGNOP) {
+                   match( Token.ASSIGNOP );
+                   expr = expression();
+                   // TODO: compile-time initialization, if possible
+                }
+                   
+               
                 match( Token.RPAREN );
                 match( Token.SEMICOLON );
                 break;
