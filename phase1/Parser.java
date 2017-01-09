@@ -120,6 +120,13 @@ public class Parser
         }
     }
     
+    // New method added to match "int" or "string" in type declarations
+    private void type() {
+    	int tokenType = currentToken.getType();
+    	if (!tokenType == Token.INT && !tokenType == Token.STRING)
+    		error(tokenType);
+    }
+   
     private void idList()
     {
         Expression idExpr;
