@@ -261,7 +261,7 @@ class CodeFactory {
 	
 	// TODO: Implement this method
 	void generateStringAssignment( StringExpression lValue, StringExpression expr) {
-		
+		System.out.println("Assign string expression to " + lValue.expressionName);
 	}
 
 	void generateStart() {
@@ -291,7 +291,7 @@ class CodeFactory {
 			if (initValue == null) {
 				// Initialize empty string, with max length 256
 				System.out.println(var + ":\t.zero 256");
-				System.out.println("_" + var + "Len:\t.int 1"); // Add length count
+				System.out.println("__" + var + "Len:\t.int 1"); // Add length count
 			} else {
 				if (!(initValue instanceof String))
 					continue; // in case of previous compiler error
@@ -299,7 +299,7 @@ class CodeFactory {
 				String literal = (String)initValue;
 				System.out.println(var + ":\t.string \"" + literal + "\"");
 				System.out.println("\t.zero " + (255 - literal.length()));
-				System.out.println("_" + var + "Len:\t.int " + (literal.length() + 1));
+				System.out.println("__" + var + "Len:\t.int " + (literal.length() + 1));
 			}
 		}
 		

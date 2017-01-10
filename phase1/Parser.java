@@ -88,6 +88,7 @@ public class Parser
     {
         Expression lValue;
         Expression expr;
+        StringExpression stringExpr;
         
         switch ( currentToken.getType() )
         {
@@ -95,8 +96,14 @@ public class Parser
             {
                 lValue = identifier(false);
                 match( Token.ASSIGNOP );
-                expr = expression();
-                codeFactory.generateAssignment( lValue, expr );
+                // Added conditional here to determine whether to match int or string expression
+                if (symbolTable.getType(lValue.expressionName) == Token.STRING) {
+                	stringExpr = stringExpression();
+                	codeFactory.generateStringAssignment( new StringExpression(0, lValue.expressionName), stringExpr );
+                } else {
+                	expr = expression();
+                	codeFactory.generateAssignment( lValue, expr );
+                }
                 match( Token.SEMICOLON );
                 break;
             }
