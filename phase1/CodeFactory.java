@@ -8,7 +8,7 @@ class CodeFactory {
 	private static boolean firstWrite = true;
 	
 	private SymbolTable symbolTable; // Reference to the symbol table in Parser
-	private boolean usesStrCpy, usesWriteStr;
+	private boolean usesStrCpy, usesWriteStr, usesConcat;
 
 	public CodeFactory(SymbolTable symbolTable) {
 		tempCount = 0;
@@ -47,9 +47,16 @@ class CodeFactory {
 		return tempExpr;
 	}
 	
-	// TODO: implement this method, maybe using a predefined assembly method?
+	// Call a helper assembly method to concatenate two strings into a temporary string
 	StringExpression generateConcatExpr(StringExpression left, StringExpression right) {
-		return new StringExpression();
+		String resultName = createStringTemp();
+		StringExpression result = new StringExpression(StringExpression.IDEXPR, resultName);
+		System.out.println("\n\tPUSHL $" + left.expressionName);	// Push left operand address
+		System.out.println("\tPUSHL $" + right.expressionName);	// Push right operand address
+		System.out.println("\tPUSHL $" + resultName);	// Push destination address
+		System.out.println("\tCALL __concat");
+		usesConcat = true;
+		return result;
 	}
 
 	void generateWrite(Expression expr) {
@@ -66,7 +73,7 @@ class CodeFactory {
 	}
 	
 	void generateStringWrite(StringExpression expr) {
-		System.out.println("\tPUSHL $" + expr.expressionName); // Push string source onto stack
+		System.out.println("\n\tPUSHL $" + expr.expressionName); // Push string source onto stack
 		System.out.println("\tCALL __writeStr"); // Use helper method to write string, using its corresponding length variable
 		usesWriteStr = true;
 	}
@@ -267,7 +274,7 @@ class CodeFactory {
 	}
 	
 	void generateStringAssignment( StringExpression lValue, StringExpression expr) {
-		System.out.println("\tPUSHL $" + expr.expressionName); // Push source address
+		System.out.println("\n\tPUSHL $" + expr.expressionName); // Push source address
 		System.out.println("\tPUSHL $" + lValue.expressionName); // Push destination address
 		System.out.println("\tCALL __strcpy");	// Use helper method to copy string from source to destination
 		usesStrCpy = true;
@@ -321,6 +328,40 @@ class CodeFactory {
 			System.out.println("\tdecl %edx");
 			System.out.println("\tint $0x80");
 			System.out.println("\tret");
+		}
+		
+		// Add __concat method if needed
+		if (usesConcat) {
+			System.out.println("\n/* Method to concatenate 2 strings */");
+			System.out.println("__concat:");
+			System.out.println("\tpopl %edx	/* Pop return address */");
+			System.out.println("\tpopl %ecx	/* Pop destination address */");
+			System.out.println("\tpopl %ebx	/* Pop right operand address */");
+			System.out.println("\tpopl %eax	/* Pop left operand address */");
+			System.out.println("\tpushl %edx	/* Replace return address */");
+			System.out.println("\n\t/* Update string length for destination here */");
+			System.out.println("\tmovl 256(%eax), %edx");
+			System.out.println("\taddl 256(%ebx), %edx");
+			System.out.println("\tdecl %edx");
+			System.out.println("\tmovl %edx, 256(%ecx)");
+			System.out.println("\n__concatloop1:");
+			System.out.println("\tcmpb $0, (%eax)	/* Move on to second operand at zero character */");
+			System.out.println("\tjz __concatloop2");
+			System.out.println("\tmovb (%eax), %dl");
+			System.out.println("\tmovb %dl, (%ecx)	/* Move character */");
+			System.out.println("\tincl %eax");
+			System.out.println("\tincl %ecx");
+			System.out.println("\tjmp __concatloop1");
+			System.out.println("\n__concatloop2:");
+			System.out.println("\tmovb (%ebx), %dl");
+			System.out.println("\tmovb %dl, (%ecx)	/* Move character */");
+			System.out.println("\tcmpb $0, (%ebx)");
+			System.out.println("\tjz __concatend	/* Stop concatenating at zero character */");
+			System.out.println("\tincl %ebx");
+			System.out.println("\tincl %ecx");
+			System.out.println("\tjmp __concatloop2");
+			System.out.println("\n__concatend:");
+			System.out.println("\tret	/* Operation finished, so return */");
 		}
 	}
 
