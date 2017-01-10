@@ -147,7 +147,7 @@ public class Parser
                 	   }
                 	   // Add initial value to symbol table entry
                 	   match (Token.STRINGLITERAL);
-                	   StringExpression literal = processStringLiteral();
+                	   StringExpression literal = processStringLiteral(true);
                 	   symbolTable.initVariable(varToken.getId(), literal.expressionValue);
                 	   
                    } else if (currentToken.getType() == Token.INTLITERAL || currentToken.getType() == Token.MINUS) {
@@ -325,7 +325,7 @@ public class Parser
     		return new StringExpression(StringExpression.IDEXPR, previousToken.getId());
     	} else if (currentToken.getType() == Token.STRINGLITERAL) {
     		match(Token.STRINGLITERAL);
-    		return processStringLiteral();
+    		return processStringLiteral(false);
     	} else {
     		error( currentToken );
         	return new StringExpression();
@@ -404,12 +404,16 @@ public class Parser
         return expr;
     }
     
-    private StringExpression processStringLiteral()
+    private StringExpression processStringLiteral(boolean isDeclaration)
     {
-    	String literalVar = codeFactory.createStringTemp();
-    	symbolTable.addItem(new Token(literalVar, Token.ID), Token.STRING);
-    	symbolTable.initVariable(literalVar, previousToken.getId());
-    	return new StringExpression(StringExpression.IDEXPR, literalVar);
+    	if (isDeclaration) {
+    		return new StringExpression(previousToken.getId());
+    	} else {
+    		String literalVar = codeFactory.createStringTemp();
+        	symbolTable.addItem(new Token(literalVar, Token.ID), Token.STRING);
+        	symbolTable.initVariable(literalVar, previousToken.getId());
+        	return new StringExpression(StringExpression.IDEXPR, literalVar);
+    	}
     }
     
     private Operation processOperation()
