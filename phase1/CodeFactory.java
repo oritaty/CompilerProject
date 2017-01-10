@@ -2,17 +2,26 @@ import java.util.ArrayList;
 
 class CodeFactory {
 	private static int tempCount;
-	private static ArrayList<String> variablesList;
+	private static ArrayList<String> intVariablesList;
+	private static ArrayList<String> stringVariablesList;
 	private static int labelCount = 0;
 	private static boolean firstWrite = true;
+	
+	private SymbolTable symbolTable; // Reference to the symbol table in Parser
 
-	public CodeFactory() {
+	public CodeFactory(SymbolTable symbolTable) {
 		tempCount = 0;
-		variablesList = new ArrayList<String>();
+		intVariablesList = new ArrayList<String>();
+		stringVariablesList = new ArrayList<String>();
+		this.symbolTable = symbolTable;
 	}
 
-	void generateDeclaration(Token token) {
-		variablesList.add(token.getId());
+	void generateIntDeclaration(Token token) {
+		intVariablesList.add(token.getId());
+	}
+	
+	void generateStringDeclaration(Token token) {
+		stringVariablesList.add(token.getId());
 	}
 
 	Expression generateArithExpr(Expression left, Expression right, Operation op) {
@@ -35,6 +44,11 @@ class CodeFactory {
 		}
 		System.out.println("\tMOVL " + "%eax, " + tempExpr.expressionName);
 		return tempExpr;
+	}
+	
+	// TODO: implement this method, maybe using a predefined assembly method?
+	StringExpression generateConcatExpr(StringExpression left, StringExpression right) {
+		return new StringExpression();
 	}
 
 	void generateWrite(Expression expr) {
@@ -258,16 +272,40 @@ class CodeFactory {
 
 	public void generateData() {
 		System.out.println("\n\n.data");
-		for (String var : variablesList)
-			System.out.println(var + ":\t.int 0");
-		System.out.println("__minus:  .byte '-'");
+		System.out.println("/* Int variables */");
+		for (String var : intVariablesList) {
+			System.out.print(var + ":\t.int ");
+			Object initValue = symbolTable.getInitValue(var);
+			// Initialize as zero if no initValue is given in symbol table
+			System.out.println(initValue == null ? "0" : initValue);
+		}
+		
+		System.out.println("\n/* String variables */");
+		for (String var : stringVariablesList) {
+			Object initValue = symbolTable.getInitValue(var);
+			if (initValue == null) {
+				// Initialize empty string, with max length 256
+				System.out.println(var + ":\t.zero 256");
+				System.out.println("_" + var + "Len:\t.int 1"); // Add length count
+			} else {
+				if (!(initValue instanceof String))
+					continue; // in case of previous compiler error
+				// Initialize with literal, and allocate more zeros to make max length 256
+				String literal = (String)initValue;
+				System.out.println(var + ":\t.string \"" + literal + "\"");
+				System.out.println("\t.zero " + (255 - literal.length()));
+				System.out.println("_" + var + "Len:\t.int " + (literal.length() + 1));
+			}
+		}
+		
+		System.out.println("\n__minus:  .byte '-'");
 		System.out.println("__negOne: .int -1");
 		System.out.println("__negFlag: .byte '+'");
 	}
 
 	private String createTempName() {
 		String tempVar = new String("temp" + tempCount++);
-		variablesList.add(tempVar);
+		intVariablesList.add(tempVar);
 		return tempVar;
 	}
 

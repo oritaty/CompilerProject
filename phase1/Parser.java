@@ -49,8 +49,8 @@ public class Parser
         Parser parser = new Parser();
       //  scanner = new Scanner( args[0]);
         scanner = new Scanner( "test.txt");
-        codeFactory = new CodeFactory();
         symbolTable = new SymbolTable();
+        codeFactory = new CodeFactory(symbolTable); // Pass reference to the symbol table
         parser.parse();
     }
     
@@ -118,46 +118,54 @@ public class Parser
                 match( Token.SEMICOLON );
                 break;
             }
-            case Token.DECLARE :
+            case Token.DECLARE :	// Added, to process the new declaration syntax
             {
                 match( Token.DECLARE);
                 match( Token.LPAREN );
                 type();
-                int declareType = previousToken.getType();
+                int declareType = previousToken.getType(); // Token.INT or Token.STRING
                 lValue = identifier(true); // The variable being declared
-                Token varToken = previousToken;
+                Token varToken = previousToken; // Its identifier token
                 
                 symbolTable.addItem(varToken, declareType);
                 
+                // Process an initialization, if there is one
                 if (currentToken.getType() == Token.ASSIGNOP) {
                    match( Token.ASSIGNOP );
                    if (currentToken.getType() == Token.STRINGLITERAL) {
                 	   // Initializing with string literal
-                	   if (declareType != Token.STRING)
+                	   if (declareType != Token.STRING) {
                 		   System.out.println("Type error! Cannot initialize non-string variable to a string at line "
                 				   + scanner.getLineNumber());
+                	   }
+                	   // Add initial value to symbol table entry
+                	   match (Token.STRINGLITERAL);
+                	   StringExpression literal = processStringLiteral();
+                	   symbolTable.initVariable(varToken.getId(), literal.expressionValue);
                 	   
-                	   match( Token.STRINGLITERAL );
-                	   codeFactory.generateDeclaration( varToken );	// TODO: Handle initialization of string
-                   } else if (currentToken.getType() == Token.INTLITERAL) {
+                   } else if (currentToken.getType() == Token.INTLITERAL) {		// TODO: Check if negatives work here
                 	   // Initializing with int literal
-                	   if (declareType != Token.INT)	// TODO: Check if negatives work here
+                	   if (declareType != Token.INT) {
                 		   System.out.println("Type error! Cannot initialize non-int variable to an int at line "
                 				   + scanner.getLineNumber());
-                	   
+                	   }
+                	   // Add an initial value to symbol table entry
                 	   match( Token.INTLITERAL );
-                	   codeFactory.generateDeclaration( varToken ); // TODO: Handle initialization of int
+                	   Expression literal = processLiteral();
+                	   symbolTable.initVariable(varToken.getId(), literal.expressionIntValue);
                    } else {
                 	   // Trying to initialize to something that isn't a literal
-                	   System.out.println("Initialization error! Variable must be initialized to a literal at line "
+                	   System.out.println("Initialization error! Variables can only be initialized to a literal, at line "
                 			   + scanner.getLineNumber());
                    }
                 	   
-                } else {
-                    // No initialization, declare as default
-                    symbolTable.addItem( previousToken, previousType );
-                    codeFactory.generateDeclaration( previousToken );
                 }
+                
+                // Add to the proper variable list in CodeFactory
+                if (declareType == Token.STRING)
+                    codeFactory.generateStringDeclaration( varToken );
+                else
+                	codeFactory.generateIntDeclaration( varToken );
                    
                
                 match( Token.RPAREN );
@@ -168,19 +176,18 @@ public class Parser
         }
     }
     
-    // New method added to match "int" or "string" in type declarations
-    private void type() {
-    	int tokenType = currentToken.getType();
-    	if (tokenType == Token.INT) {
-         previousType = Token.INT;
-         match (Token.INT);
-      } else if (tokenType == Token.STRING) {
-         previousType = Token.STRING;
-         match (Token.STRING);
-      }
-      else
-    		error(tokenType); // Invalid type keyword
-    }
+	// New method added to match "int" or "string" in type declarations
+	private void type() {
+		int tokenType = currentToken.getType();
+		if (tokenType == Token.INT) {
+			previousType = Token.INT;
+			match(Token.INT);
+		} else if (tokenType == Token.STRING) {
+			previousType = Token.STRING;
+			match(Token.STRING);
+		} else
+			error(tokenType); // Invalid type keyword
+	}
    
     private void idList()
     {
@@ -226,6 +233,24 @@ public class Parser
         return result;
     }
     
+    // Modification of Expression to handle string literals, ids, or concat operations
+    private StringExpression stringExpression()
+    {
+    	StringExpression result;
+    	StringExpression leftOperand;
+    	StringExpression rightOperand;
+    	
+    	result = stringPrimary();
+    	while ( currentToken.getType() == Token.CONCAT )
+    	{
+    		leftOperand = result;
+    		match(Token.CONCAT);
+    		rightOperand = stringPrimary();
+    		result = codeFactory.generateConcatExpr( leftOperand, rightOperand );
+    	}
+    	return result;
+    }
+    
     private Expression primary()
     {
         Expression result = new Expression();
@@ -268,6 +293,20 @@ public class Parser
             default: error( currentToken );
         }
         return result;
+    }
+    
+    // Matches a string variable or literal
+    private StringExpression stringPrimary() {
+    	if (currentToken.getType() == Token.ID) {
+    		identifier(false); // Match the ID token, and check it has been declared
+    		return new StringExpression(StringExpression.IDEXPR, previousToken.getId());
+    	} else if (currentToken.getType() == Token.STRINGLITERAL) {
+    		match(Token.STRINGLITERAL);
+    		return processStringLiteral();
+    	} else {
+    		error( currentToken );
+        	return new StringExpression();
+    	}
     }
     
     private Operation addOperation()
@@ -336,6 +375,11 @@ public class Parser
         }
         Parser.signSet = false;
         return expr;
+    }
+    
+    private StringExpression processStringLiteral()
+    {
+    	return new StringExpression(previousToken.getId());
     }
     
     private Operation processOperation()

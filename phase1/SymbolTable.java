@@ -34,6 +34,10 @@ class SymbolTable
             this.initValue = value;
         }
         
+        public Object getInitValue() {
+        	return this.initValue;
+        }
+        
         public int getType() {
         	return this.type;
         }
@@ -69,6 +73,16 @@ class SymbolTable
                s.setInitValue(value);
            }
         }
+    }
+    
+    public Object getInitValue( String id )
+    {
+        for (Symbol s : st) {
+           if (s.getId().equals(id)) {
+               return s.getInitValue();
+           }
+        }
+        return null;
     }
     
     //For test purpose.
