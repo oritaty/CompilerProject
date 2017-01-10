@@ -143,11 +143,16 @@ public class Parser
                 	   StringExpression literal = processStringLiteral();
                 	   symbolTable.initVariable(varToken.getId(), literal.expressionValue);
                 	   
-                   } else if (currentToken.getType() == Token.INTLITERAL) {		// TODO: Check if negatives work here
+                   } else if (currentToken.getType() == Token.INTLITERAL || currentToken.getType() == Token.MINUS) {
                 	   // Initializing with int literal
                 	   if (declareType != Token.INT) {
                 		   System.out.println("Type error! Cannot initialize non-int variable to an int at line "
                 				   + scanner.getLineNumber());
+                	   }
+                	   // Handle a possible minus sign
+                	   if (currentToken.getType() == Token.MINUS) {
+                		   match( Token.MINUS );
+                		   processSign();
                 	   }
                 	   // Add an initial value to symbol table entry
                 	   match( Token.INTLITERAL );
@@ -364,6 +369,10 @@ public class Parser
     }
     private Expression processLiteral()
     {
+    	if (previousToken.getType() != Token.INTLITERAL) {
+    		Parser.signSet = false;
+    		return new Expression(); // No valid literal to process
+    	}
     	Expression expr;
         int value = ( new Integer( previousToken.getId() )).intValue();
         if (Parser.signSet && Parser.signFlag.equals("-"))

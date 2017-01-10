@@ -258,6 +258,11 @@ class CodeFactory {
 			System.out.println("\tMOVL %eax, " + lValue.expressionName);
 		}
 	}
+	
+	// TODO: Implement this method
+	void generateStringAssignment( StringExpression lValue, StringExpression expr) {
+		
+	}
 
 	void generateStart() {
 		System.out.println(".text\n.global _start\n\n_start:\n");
