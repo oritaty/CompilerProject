@@ -271,7 +271,7 @@ class CodeFactory {
 		}
 		System.out.println("\tPUSHL $" + lValue.expressionName); // Push destination address
 		System.out.println("\tCALL __strcpy");	// Use helper method to copy string from source to destination
-		usesWriteStr = true;
+		usesStrCpy = true;
 	}
 
 	void generateStart() {
