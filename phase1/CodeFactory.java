@@ -260,10 +260,18 @@ class CodeFactory {
 		}
 	}
 	
-	// TODO: Implement this method
 	void generateStringAssignment( StringExpression lValue, StringExpression expr) {
-		System.out.println("Assign string expression to " + lValue.expressionName);
-		usesStrCpy = true;
+		if (expr.expressionType == StringExpression.LITERALEXPR) {
+			String literalVar = createStringTemp();
+			symbolTable.addItem(new Token(literalVar, Token.ID), Token.STRING);
+			symbolTable.initVariable(literalVar, expr.expressionValue);
+			System.out.println("\tPUSHL $" + literalVar); // Push source address
+		} else {
+			System.out.println("\tPUSHL $" + expr.expressionName); // Push source address
+		}
+		System.out.println("\tPUSHL $" + lValue.expressionName); // Push destination address
+		System.out.println("\tCALL __strcpy");	// Use helper method to copy string from source to destination
+		usesWriteStr = true;
 	}
 
 	void generateStart() {
@@ -351,8 +359,14 @@ class CodeFactory {
 	}
 
 	private String createTempName() {
-		String tempVar = new String("temp" + tempCount++);
+		String tempVar = new String("__temp" + tempCount++);
 		intVariablesList.add(tempVar);
+		return tempVar;
+	}
+	
+	private String createStringTemp() {
+		String tempVar = new String("__temp" + tempCount++);
+		stringVariablesList.add(tempVar);
 		return tempVar;
 	}
 
