@@ -406,7 +406,10 @@ public class Parser
     
     private StringExpression processStringLiteral()
     {
-    	return new StringExpression(previousToken.getId());
+    	String literalVar = codeFactory.createStringTemp();
+    	symbolTable.addItem(new Token(literalVar, Token.ID), Token.STRING);
+    	symbolTable.initVariable(literalVar, previousToken.getId());
+    	return new StringExpression(StringExpression.IDEXPR, literalVar);
     }
     
     private Operation processOperation()

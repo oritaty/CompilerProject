@@ -267,14 +267,7 @@ class CodeFactory {
 	}
 	
 	void generateStringAssignment( StringExpression lValue, StringExpression expr) {
-		if (expr.expressionType == StringExpression.LITERALEXPR) {
-			String literalVar = createStringTemp();
-			symbolTable.addItem(new Token(literalVar, Token.ID), Token.STRING);
-			symbolTable.initVariable(literalVar, expr.expressionValue);
-			System.out.println("\tPUSHL $" + literalVar); // Push source address
-		} else {
-			System.out.println("\tPUSHL $" + expr.expressionName); // Push source address
-		}
+		System.out.println("\tPUSHL $" + expr.expressionName); // Push source address
 		System.out.println("\tPUSHL $" + lValue.expressionName); // Push destination address
 		System.out.println("\tCALL __strcpy");	// Use helper method to copy string from source to destination
 		usesStrCpy = true;
@@ -370,7 +363,8 @@ class CodeFactory {
 		return tempVar;
 	}
 	
-	private String createStringTemp() {
+	// Public method, since this is also used to create variables for literal values
+	public String createStringTemp() {
 		String tempVar = new String("__temp" + tempCount++);
 		stringVariablesList.add(tempVar);
 		return tempVar;
