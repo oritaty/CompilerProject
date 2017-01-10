@@ -214,17 +214,28 @@ public class Parser
         }
     }
     
-    private void expressionList()
+    private void expressionList() // Modified to check whether each expression is int or string
     {
-        Expression expr;
-        expr = expression();
-        codeFactory.generateWrite(expr);
+        writeExpression();
         while ( currentToken.getType() == Token.COMMA )
         {
             match( Token.COMMA );
-            expr = expression();
-            codeFactory.generateWrite(expr);
+            writeExpression();
         }
+    }
+    
+    // Added method, to write an individual expression in an expression list
+    private void writeExpression() {
+    	if (currentToken.getType() == Token.STRINGLITERAL
+    			|| (currentToken.getType() == Token.ID && symbolTable.getType(currentToken.getId()) == Token.STRING)) {
+    		// String expression
+    		StringExpression expr = stringExpression();
+    		codeFactory.generateStringWrite(expr);
+    	} else {
+    		// Int expression
+    		Expression expr = expression();
+    		codeFactory.generateWrite(expr);
+    	}
     }
     
     private Expression expression()

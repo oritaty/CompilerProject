@@ -64,6 +64,12 @@ class CodeFactory {
 		}
 		}
 	}
+	
+	void generateStringWrite(StringExpression expr) {
+		System.out.println("\tPUSHL $" + expr.expressionName); // Push string source onto stack
+		System.out.println("\tCALL __writeStr"); // Use helper method to write string, using its corresponding length variable
+		usesWriteStr = true;
+	}
 
 	private void generateAssemblyCodeForWriting(String idName) {
 		if (!firstWrite) {
