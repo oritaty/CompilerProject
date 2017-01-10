@@ -8,6 +8,7 @@ class CodeFactory {
 	private static boolean firstWrite = true;
 	
 	private SymbolTable symbolTable; // Reference to the symbol table in Parser
+	private boolean usesStrCpy, usesWriteStr;
 
 	public CodeFactory(SymbolTable symbolTable) {
 		tempCount = 0;
@@ -262,6 +263,7 @@ class CodeFactory {
 	// TODO: Implement this method
 	void generateStringAssignment( StringExpression lValue, StringExpression expr) {
 		System.out.println("Assign string expression to " + lValue.expressionName);
+		usesStrCpy = true;
 	}
 
 	void generateStart() {
@@ -273,6 +275,46 @@ class CodeFactory {
 		System.out.println("\tmov $1, %eax");
 		System.out.println("\tmov $1, %ebx");
 		System.out.println("\tint $0x80");
+		
+		// Add __strcpy method if needed
+		if (usesStrCpy) {
+			System.out.println("\n/* Method to copy string from a source to a destination */");
+			System.out.println("__strcpy:");
+			System.out.println("\tpopl %ecx	/* Pop return address */");
+			System.out.println("\tpopl %ebx	/* Pop destination address */");
+			System.out.println("\tpopl %eax	/* Pop source address */");
+			System.out.println("\tpushl %ecx	/* Replace return address */");
+			System.out.println("\tpushl %ebx	/* Put destination start address on top of stack */");
+			System.out.println("__strcpyloop:");
+			System.out.println("\tmovb (%eax), %cl");
+			System.out.println("\tmovb %cl, (%ebx)	/* Move character */");
+			System.out.println("\tcmpb $0, (%eax)");
+			System.out.println("\tjz __strcpyend		/* Stop copying at zero character */");
+			System.out.println("\tincl %eax");
+			System.out.println("\tincl %ebx");
+			System.out.println("\tjmp __strcpyloop");
+			System.out.println("__strcpyend:");
+			System.out.println("\tincl %ebx");
+			System.out.println("\tpopl %ecx");
+			System.out.println("\tsubl %ecx, %ebx		/* Subtract destination start address to get new length */");
+			System.out.println("\tmovl %ebx, 256(%ecx)");
+			System.out.println("\tret");
+		}
+		
+		// Add __writeStr method if needed
+		if (usesWriteStr) {
+			System.out.println("\n/* Method to write string to output */");
+			System.out.println("__writeStr:");
+			System.out.println("\tpopl %ebx");
+			System.out.println("\tpopl %ecx	/* Extract source address */");
+			System.out.println("\tpushl %ebx\n");
+			System.out.println("\tmovl $4, %eax");
+			System.out.println("\tmovl $1, %ebx");
+			System.out.println("\tmovl 256(%ecx), %edx	/* Use corresponding length variable */");
+			System.out.println("\tdecl %edx");
+			System.out.println("\tint $0x80");
+			System.out.println("\tret");
+		}
 	}
 
 	public void generateData() {
