@@ -388,7 +388,7 @@ class CodeFactory {
 			System.out.println("\tincl %ecx");
 			System.out.println("\tjmp __readStrLoop");
 			System.out.println("\n__readStrEnd:");
-			System.out.println("\tmovb $'\\0', (%ecx)");
+			System.out.println("\tmovb $0, (%ecx)");
 			System.out.println("\tincl %ecx");
 			System.out.println("\tpopl %eax");
 			System.out.println("\tsubl %eax, %ecx		/* Subtract start address to get string length */");
