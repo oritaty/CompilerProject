@@ -8,7 +8,7 @@ class CodeFactory {
 	private static boolean firstWrite = true;
 	
 	private SymbolTable symbolTable; // Reference to the symbol table in Parser
-	private boolean usesStrCpy, usesWriteStr, usesConcat;
+	private boolean usesStrCpy, usesWriteStr, usesConcat, usesReadStr;
 
 	public CodeFactory(SymbolTable symbolTable) {
 		tempCount = 0;
@@ -178,6 +178,12 @@ class CodeFactory {
 			// should be generated
 		}
 		}
+	}
+	
+	void generateStringRead(String identifier) {
+		System.out.println("\n\tPUSHL $" + identifier);// Push string destination onto stack
+		System.out.println("\tCALL __readStr"); // Use helper method to read string into destination
+		usesReadStr = true;
 	}
 
 	private void generateAssemblyCodeForReading(String idName) {
@@ -362,6 +368,32 @@ class CodeFactory {
 			System.out.println("\tjmp __concatloop2");
 			System.out.println("\n__concatend:");
 			System.out.println("\tret	/* Operation finished, so return */");
+		}
+		
+		// Add __readStr method if needed
+		if (usesReadStr) {
+			System.out.println("\n/* Method to read a string from input, terminated by newline */");
+			System.out.println("__readStr:");
+			System.out.println("\tpopl %ebx");
+			System.out.println("\tpopl %ecx	/* Extract destination address */");
+			System.out.println("\tpushl %ebx");
+			System.out.println("\tpushl %ecx	/* Push start address back for later */");
+			System.out.println("\n__readStrLoop:");
+			System.out.println("\tmovl $3, %eax");
+			System.out.println("\tmovl $0, %ebx");
+			System.out.println("\tmovl $1, %edx	/* Read one character, to address passed from stack */");
+			System.out.println("\tint $0x80");
+			System.out.println("\n\tcmpb $'\\n', (%ecx)");
+			System.out.println("\tjz __readStrEnd		/* Stop reading at a newline character */");
+			System.out.println("\tincl %ecx");
+			System.out.println("\tjmp __readStrLoop");
+			System.out.println("\n__readStrEnd:");
+			System.out.println("\tmovb $'\\0', (%ecx)");
+			System.out.println("\tincl %ecx");
+			System.out.println("\tpopl %eax");
+			System.out.println("\tsubl %eax, %ecx		/* Subtract start address to get string length */");
+			System.out.println("\tmovl %ecx, 256(%eax)	/* Store string length in corresponding length variable */");
+			System.out.println("\tret");
 		}
 	}
 

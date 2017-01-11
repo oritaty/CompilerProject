@@ -53,7 +53,7 @@ class SymbolTable
     public void addItem( Token token, int type )
     {
         st.add( new Symbol( token.getId(), type) );
-        printAll();
+        //printAll();
     }
     
     public boolean checkSTforItem( String id )

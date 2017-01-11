@@ -203,15 +203,24 @@ public class Parser
    
     private void idList()
     {
-        Expression idExpr;
-        idExpr = identifier(false);
-        codeFactory.generateRead(idExpr);
+        readId();
         while ( currentToken.getType() == Token.COMMA )
         {
             match(Token.COMMA);
-            idExpr = identifier(false);
-            codeFactory.generateRead(idExpr);
+            readId();
         }
+    }
+    
+    // Added method, reads an individual string or int from std in
+    private void readId() {
+    	Expression idExpr = identifier(false);
+    	if (symbolTable.getType(idExpr.expressionName) == Token.STRING) {
+    		// Read string
+    		codeFactory.generateStringRead(idExpr.expressionName);
+    	} else {
+    		// Read int
+    		codeFactory.generateRead(idExpr);
+    	}
     }
     
     private void expressionList() // Modified to check whether each expression is int or string
