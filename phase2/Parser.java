@@ -426,6 +426,7 @@ public class Parser
 
     private void processSign()
     {
+	/* changed
     	Parser.signSet = true;
     	if ( previousToken.getType() == Token.PLUS ) 
     	{
@@ -433,7 +434,22 @@ public class Parser
     	} else
     	{
     		Parser.signFlag = "-";
-    	}
+    	}*/
+	    
+	Parser.signSet = true;
+    	if ( previousToken.getType() == Token.PLUS ) {
+    		Parser.signFlag = "+";
+    	} else if (previousToken.getType() == Token.MINUS ) {
+    		Parser.signFlag = "-";
+    	} else if (previousToken.getType() == Token.MULT ) {
+    		Parser.signFlag = "*";
+    	} else if (previousToken.getType() == Token.DIV ) {
+    		Parser.signFlag = "/";
+    	} else if (previousToken.getType() == Token.MOD ) {
+    		Parser.signFlag = "%";
+    	} else {
+            
+        }
     }
     private Expression processLiteral()
     {
