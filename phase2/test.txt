@@ -1,0 +1,8 @@
+BEGIN
+   DECLARE (int x);
+   DECLARE (int y);
+   x := x * y;
+   WRITE (x);
+END
+
+/*Multiplication success.*/
