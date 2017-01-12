@@ -23,9 +23,14 @@ public class Token {
     public final static int CONCAT = 17; //Added
     public final static int STRINGLITERAL = 18; //Added
     public final static int DECLARE = 19; //Added
-    public final static int BOOLEAN = 20; //Added phase2
-    public final static int BOOLEANLITERAL = 21; //Added phase2
-
+    
+    //Added for phase 2
+    public final static int BOOLEAN = 20; 
+    public final static int BOOLEANLITERAL = 21; 
+    public final static int MULT = 22;
+    public final static int DIV = 23;
+    public final static int MOD = 24;
+    
     public Token( String tokenString, int tokenType)
     {
         id = tokenString;
@@ -75,8 +80,14 @@ public class Token {
             case CONCAT : str = "CONCAT"; break; //Added
             case STRINGLITERAL : str = "STRINGLITERAL"; break; //Added
             case DECLARE : str = "DECLARE"; break; //Added
-            case BOOLEAN : str = "BOOLEAN"; break; //Added phase2
-            case BOOLEANLITERAL : str = "BOOLEANLITERAL"; break; //Added phase2
+                
+            //Added for phase 2
+            case BOOLEAN : str = "BOOLEAN"; break; 
+            case BOOLEANLITERAL : str = "BOOLEANLITERAL"; break; 
+            case MULT : str = "MULT"; break;
+            case DIV : str = "DIV"; break;
+            case MOD : str = "MOD"; break;
+            
             default: str = "Lexical Error";
         }
         return str;
