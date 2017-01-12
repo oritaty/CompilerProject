@@ -441,15 +441,7 @@ public class Parser
     		Parser.signFlag = "+";
     	} else if (previousToken.getType() == Token.MINUS ) {
     		Parser.signFlag = "-";
-    	} else if (previousToken.getType() == Token.MULT ) {
-    		Parser.signFlag = "*";
-    	} else if (previousToken.getType() == Token.DIV ) {
-    		Parser.signFlag = "/";
-    	} else if (previousToken.getType() == Token.MOD ) {
-    		Parser.signFlag = "%";
-    	} else {
-            
-        }
+    	}
     }
     private Expression processLiteral()
     {
