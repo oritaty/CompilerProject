@@ -399,6 +399,25 @@ public class Parser
                 op = processOperation();
                 break;
             }
+	    case Token.MULT:
+            {
+                match( Token.MULT ); 
+                op = processOperation();
+                break;
+            }
+            case Token.DIV:
+            {
+                match( Token.DIV ); 
+                op = processOperation();
+                break;
+            }
+            case Token.MOD:
+            {
+                match( Token.MOD ); 
+                op = processOperation();
+                break;
+            }
+
             default: error( currentToken );
         }
         return op;
