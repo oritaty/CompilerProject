@@ -270,7 +270,9 @@ public class Parser
         Operation op;
         
         result = primary();
-        while ( currentToken.getType() == Token.PLUS || currentToken.getType() == Token.MINUS )
+        while ( currentToken.getType() == Token.PLUS || currentToken.getType() == Token.MINUS ||
+	        currentToken.getType() == Token.MULT || currentToken.getType() == Token.DIV || 
+                currentToken.getType() == Token.MOD)
         {
             leftOperand = result;
             op = addOperation();
@@ -332,6 +334,30 @@ public class Parser
             case Token.PLUS:
             {
                 match(Token.PLUS);
+                processSign();
+                match(Token.INTLITERAL);
+                result = processLiteral();
+                break;
+            }
+	    case Token.MULT:
+            {
+                match(Token.MULT);
+                processSign();
+                match(Token.INTLITERAL);
+                result = processLiteral();
+                break;
+            }
+            case Token.DIV:
+            {
+                match(Token.DIV);
+                processSign();
+                match(Token.INTLITERAL);
+                result = processLiteral();
+                break;
+            }
+            case Token.MOD:
+            {
+                match(Token.MOD);
                 processSign();
                 match(Token.INTLITERAL);
                 result = processLiteral();
