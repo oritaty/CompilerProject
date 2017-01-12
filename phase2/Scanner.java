@@ -135,14 +135,31 @@ public class Scanner
             tokenStr = "%";
             tokenType = Token.MOD;
             i++;
+        } else if(currentLine.charAt(i) == '~')
+        {
+        	tokenStr = "~";
+        	tokenType = Token.NOT;
+        	i++;
+        } else if(currentLine.charAt(i) == '&')
+        {
+        	tokenStr = "&";
+        	tokenType = Token.AND;
+        	i++;
         }
         
         //Added from here
-        else if (currentLine.charAt(i) == '|'  && i+1 < len && currentLine.charAt(i+1) == '|')
+        else if (currentLine.charAt(i) == '|')
         {
-            tokenStr = "||";
-            tokenType = Token.CONCAT;
-            i+=2;
+        	// Modified (phase 2) to differentiate between concat (||) and OR (|) operators
+        	if (i+1 < len && currentLine.charAt(i+1) == '|') {
+                tokenStr = "||";
+                tokenType = Token.CONCAT;
+                i+=2;
+        	} else {
+        		tokenStr = "|";
+        		tokenType = Token.OR;
+        		i++;
+        	}
         } 
         
         /*

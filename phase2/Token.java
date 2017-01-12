@@ -30,6 +30,9 @@ public class Token {
     public final static int MULT = 22;
     public final static int DIV = 23;
     public final static int MOD = 24;
+    public final static int NOT = 25;
+    public final static int AND = 26;
+    public final static int OR = 27;
     
     public Token( String tokenString, int tokenType)
     {
@@ -90,6 +93,9 @@ public class Token {
             case MULT : str = "MULT"; break;
             case DIV : str = "DIV"; break;
             case MOD : str = "MOD"; break;
+            case NOT : str = "NOT"; break;
+            case AND : str = "AND"; break;
+            case OR  : str = "OR"; break;
             
             default: str = "Lexical Error";
         }
