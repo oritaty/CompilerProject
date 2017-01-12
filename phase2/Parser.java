@@ -269,9 +269,26 @@ public class Parser
         Expression rightOperand;
         Operation op;
         
+        result = factor();
+        while ( currentToken.getType() == Token.PLUS || currentToken.getType() == Token.MINUS)
+        {
+            leftOperand = result;
+            op = addOperation();
+            rightOperand = factor();
+            result = codeFactory.generateArithExpr( leftOperand, rightOperand, op );
+        }
+        return result;
+    }
+    
+    private Expression factor()
+    {
+        Expression result;
+        Expression leftOperand;
+        Expression rightOperand;
+        Operation op;
+        
         result = primary();
-        while ( currentToken.getType() == Token.PLUS || currentToken.getType() == Token.MINUS ||
-	        currentToken.getType() == Token.MULT || currentToken.getType() == Token.DIV || 
+        while ( currentToken.getType() == Token.MULT || currentToken.getType() == Token.DIV || 
                 currentToken.getType() == Token.MOD)
         {
             leftOperand = result;
@@ -339,7 +356,7 @@ public class Parser
                 result = processLiteral();
                 break;
             }
-	    case Token.MULT:
+            case Token.MULT:
             {
                 match(Token.MULT);
                 processSign();
