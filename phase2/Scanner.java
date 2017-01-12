@@ -120,7 +120,22 @@ public class Scanner
             tokenStr = ":=";
             tokenType = Token.ASSIGNOP;
             i+=2;
-        } 
+        } else if(currentLine.charAt(i) == '*')
+        {
+            tokenStr = "*";
+            tokenType = Token.MULT;
+            i++;
+        } else if(currentLine.charAt(i) == '/')
+        {
+            tokenStr = "/";
+            tokenType = Token.DIV;
+            i++;
+        } else if(currentLine.charAt(i) == '%')
+        {
+            tokenStr = "%";
+            tokenType = Token.MOD;
+            i++;
+        }
         
         //Added from here
         else if (currentLine.charAt(i) == '|'  && i+1 < len && currentLine.charAt(i+1) == '|')
