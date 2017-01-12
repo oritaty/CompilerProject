@@ -1,12 +1,12 @@
-import java.io.FileInputStream;          
+//import java.io.FileInputStream;          
 import java.io.IOException;         
 import java.io.FileReader;       
 import java.io.BufferedReader;
-import java.util.*;
+//import java.util.*;
 
 public class Scanner
 {    
-    public List<Token> list = new LinkedList(); //Test
+    //public List<Token> list = new LinkedList(); //Test
     public static FileReader fileIn;
     public static BufferedReader bufReader;
     public String fileName;
@@ -210,9 +210,9 @@ public class Scanner
     }
 
     //Test
-    void printAll() {
+    /* void printAll() {
         for (Token t : list) {
             System.out.println(t.toString() + " " + t.getId() + " " + t.getType());
         }
-    }
+    } */
 }
