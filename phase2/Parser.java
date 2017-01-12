@@ -479,6 +479,9 @@ public class Parser
         Operation op = new Operation();
         if ( previousToken.getType() == Token.PLUS ) op.opType = Token.PLUS;
         else if ( previousToken.getType() == Token.MINUS ) op.opType = Token.MINUS;
+	else if ( previousToken.getType() == Token.MULT ) op.opType = Token.MULT;
+        else if ( previousToken.getType() == Token.DIV ) op.opType = Token.DIV;
+        else if ( previousToken.getType() == Token.MOD ) op.opType = Token.MOD;
         else error( previousToken );
         return op;
     }
