@@ -67,7 +67,7 @@ class CodeFactory {
 			break;
 		}
 		case Expression.LITERALEXPR: {
-			System.out.println("write " + expr.expressionIntValue);
+			generateAssemblyCodeForWriting("$" + expr.expressionName);
 		}
 		}
 	}
