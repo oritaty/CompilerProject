@@ -93,7 +93,7 @@ class SymbolTable
         System.out.println();
     }
     
-    // Get the type (Token.INT or Token.STRING) of a variable
+    // Get the type (Token.INT, Token.STRING, or Token.BOOLEAN) of a variable
     public int getType( String id ) {
     	for (Symbol s : st) {
             if (s.getId().equals(id)) {

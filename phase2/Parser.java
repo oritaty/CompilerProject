@@ -36,7 +36,7 @@ public class Parser
     private static boolean signSet = false;
     private static String signFlag = "+";
    
-    private static int previousType = 0; // The most recent type keyword (Token.INT or Token.STRING)
+    //private static int previousType = 0; // The most recent type keyword (Token.INT or Token.STRING)
 
     public Parser()
     {
@@ -129,7 +129,7 @@ public class Parser
                 match( Token.DECLARE);
                 match( Token.LPAREN );
                 type();
-                int declareType = previousToken.getType(); // Token.INT or Token.STRING
+                int declareType = previousToken.getType(); // Token.INT, Token.STRING, or Token.BOOLEAN
                 lValue = identifier(true); // The variable being declared
                 Token varToken = previousToken; // Its identifier token
                 
@@ -149,6 +149,17 @@ public class Parser
                 	   StringExpression literal = processStringLiteral(true);
                 	   symbolTable.initVariable(varToken.getId(), literal.expressionValue);
                 	   
+                   } else if (currentToken.getType() == Token.BOOLEANLITERAL) {	// Added, to support new type (boolean)
+                	// Initializing with boolean literal
+                	   if (declareType != Token.BOOLEAN) {
+                		   System.out.println("Type error! Cannot initialize non-boolean variable to a boolean at line "
+                				   + scanner.getLineNumber());
+                	   }
+                	   // Add initial value to symbol table entry
+                	   match (Token.BOOLEANLITERAL);
+                	   symbolTable.initVariable(varToken.getId(),
+                			   previousToken.getId().toLowerCase().equals("true") ? Boolean.TRUE : Boolean.FALSE);
+                   
                    } else if (currentToken.getType() == Token.INTLITERAL || currentToken.getType() == Token.MINUS) {
                 	   // Initializing with int literal
                 	   if (declareType != Token.INT) {
@@ -175,6 +186,8 @@ public class Parser
                 // Add to the proper variable list in CodeFactory
                 if (declareType == Token.STRING)
                     codeFactory.generateStringDeclaration( varToken );
+                else if (declareType == Token.BOOLEAN)
+                	codeFactory.generateBooleanDeclaration( varToken );
                 else
                 	codeFactory.generateIntDeclaration( varToken );
                    
@@ -191,11 +204,14 @@ public class Parser
 	private void type() {
 		int tokenType = currentToken.getType();
 		if (tokenType == Token.INT) {
-			previousType = Token.INT;
+			//previousType = Token.INT;
 			match(Token.INT);
 		} else if (tokenType == Token.STRING) {
-			previousType = Token.STRING;
+			//previousType = Token.STRING;
 			match(Token.STRING);
+		} else if (tokenType == Token.BOOLEAN) {
+			//previousType = Token.BOOLEAN;
+			match(Token.BOOLEAN);
 		} else
 			error(tokenType); // Invalid type keyword
 	}

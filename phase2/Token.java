@@ -40,6 +40,9 @@ public class Token {
             else if ( temp.compareTo("declare") == 0) type = DECLARE;
             else if ( temp.compareTo("int") == 0) type = INT;
             else if ( temp.compareTo("string") == 0) type = STRING;
+            else if ( temp.compareTo("boolean") == 0) type = BOOLEAN;
+            else if ( temp.compareTo("true") == 0) type = BOOLEANLITERAL;
+            else if ( temp.compareTo("false") == 0) type = BOOLEANLITERAL;
         }
     }
     public String getId()

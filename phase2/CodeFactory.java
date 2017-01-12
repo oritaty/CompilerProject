@@ -4,6 +4,7 @@ class CodeFactory {
 	private static int tempCount;
 	private static ArrayList<String> intVariablesList;
 	private static ArrayList<String> stringVariablesList;
+	private static ArrayList<String> booleanVariablesList;
 	private static int labelCount = 0;
 	private static boolean firstWrite = true;
 	
@@ -14,6 +15,7 @@ class CodeFactory {
 		tempCount = 0;
 		intVariablesList = new ArrayList<String>();
 		stringVariablesList = new ArrayList<String>();
+		booleanVariablesList = new ArrayList<String>();
 		this.symbolTable = symbolTable;
 	}
 
@@ -23,6 +25,10 @@ class CodeFactory {
 	
 	void generateStringDeclaration(Token token) {
 		stringVariablesList.add(token.getId());
+	}
+	
+	void generateBooleanDeclaration(Token token) {
+		booleanVariablesList.add(token.getId());
 	}
 
 	Expression generateArithExpr(Expression left, Expression right, Operation op) {
@@ -423,6 +429,15 @@ class CodeFactory {
 				System.out.println("\t.zero " + (255 - literal.length()));
 				System.out.println("__" + var + "Len:\t.int " + (literal.length() + 1));
 			}
+		}
+		
+		System.out.println("\n/* Boolean variables */");
+		for (String var : booleanVariablesList) {
+			System.out.print(var + ":\t.byte ");
+			Object initValue = symbolTable.getInitValue(var);
+			// Initialize as 0 or 1, depending on initialization (or just 0 if no initialization)
+			System.out.println(initValue == null ? "0" :
+				(initValue.equals(Boolean.TRUE) ? "1" : "0") );
 		}
 		
 		System.out.println("\n__minus:  .byte '-'");
