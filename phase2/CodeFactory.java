@@ -43,13 +43,22 @@ class CodeFactory {
 		} else {
 			System.out.println("\tMOVL " + left.expressionName + ", %eax");
 		}
+		String targetReg = "%eax, ";
 		if (op.opType == Token.PLUS) {
-			System.out.println("\tADD %ebx, %eax");
-			
+			System.out.println("\tADD %ebx, %eax");	
 		} else if (op.opType == Token.MINUS) {
 			System.out.println("\tSUB %ebx, %eax");
-		}
-		System.out.println("\tMOVL " + "%eax, " + tempExpr.expressionName);
+		} else if (op.opType == Token.MULT) {
+			System.out.println("\tIMULL %ebx");
+		} else if (op.opType == Token.DIV) {
+			System.out.println("\tXORL %edx, %edx");
+                        System.out.println("\tIDIVL %ebx");
+		} else if (op.opType == Token.MOD) {
+			System.out.println("\tXORL %edx, %edx");
+                        System.out.println("\tIDIVL %ebx");
+                        targetReg = "%edx, ";
+                }
+                System.out.println("\tMOVL " + targetReg + tempExpr.expressionName);
 		return tempExpr;
 	}
 	
