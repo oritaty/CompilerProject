@@ -100,7 +100,7 @@ public class Parser
                 	stringExpr = stringExpression();
                 	codeFactory.generateStringAssignment( new StringExpression(0, lValue.expressionName), stringExpr );
                 } else {
-                	expr = expression();
+                	expr = expression(true);
                 	codeFactory.generateAssignment( lValue, expr );
                 }
                 match( Token.SEMICOLON );
@@ -256,20 +256,38 @@ public class Parser
     		StringExpression expr = stringExpression();
     		codeFactory.generateStringWrite(expr);
     	} else {
-    		// Int expression
-    		Expression expr = expression();
+    		// Int or boolean expression
+    		Expression expr = expression(true);
     		codeFactory.generateWrite(expr);
     	}
     }
     
-    private Expression expression()
+    private Expression expression(boolean isTopLevel)
     {
         Expression result;
         Expression leftOperand;
         Expression rightOperand;
         Operation op;
         
+        // Store the current state in case this is the wrong parse
+        int oldScannerLocation = scanner.getCurrentLocation();
+        Token oldPreviousToken = previousToken;
+        Token oldCurrentToken = currentToken;
+        
         result = factor();
+        
+        // If the expression should be a boolean expression instead of an integer one
+        if (result.expressionType == Expression.SHOULD_BE_BOOL) {
+        	if (isTopLevel) {
+	        	// Back up to state before this method's matching, to do again in boolExpression
+	        	scanner.setCurrentLocation(oldScannerLocation);
+	        	previousToken = oldPreviousToken;
+	        	currentToken = oldCurrentToken;
+	        	return boolExpression();
+        	} else
+        		return result;
+        }
+        
         while ( currentToken.getType() == Token.PLUS || currentToken.getType() == Token.MINUS)
         {
             leftOperand = result;
@@ -277,7 +295,13 @@ public class Parser
             rightOperand = factor();
             result = codeFactory.generateArithExpr( leftOperand, rightOperand, op );
         }
+        
+        
         return result;
+    }
+    
+    private Expression boolExpression() {
+    	return null;	// TODO: implement this
     }
     
     private Expression factor()
@@ -288,6 +312,10 @@ public class Parser
         Operation op;
         
         result = primary();
+        
+        if (result.expressionType == Expression.SHOULD_BE_BOOL)
+        	return result;
+        
         while ( currentToken.getType() == Token.MULT || currentToken.getType() == Token.DIV || 
                 currentToken.getType() == Token.MOD)
         {
@@ -325,13 +353,20 @@ public class Parser
             case Token.LPAREN :
             {
                 match( Token.LPAREN );
-                result = expression();
+                result = expression(false);
                 match( Token.RPAREN );
                 break;
             }
             case Token.ID:
             {
-                result = identifier(false);
+            	if (symbolTable.getType(currentToken.getId()) == Token.BOOLEAN)
+            		result.expressionType = Expression.SHOULD_BE_BOOL;
+            	else {
+            		if (symbolTable.getType(currentToken.getId()) != Token.INT)
+            			System.out.println("Type error! Variable '" + currentToken.getId() + "' is not an int at line "
+            					+ scanner.getLineNumber());
+            		result = identifier(false);
+            	}
                 break;
             }
             case Token.INTLITERAL:
@@ -379,6 +414,10 @@ public class Parser
                 match(Token.INTLITERAL);
                 result = processLiteral();
                 break;
+            }
+            case Token.BOOLEANLITERAL:	case Token.NOT:
+            {
+            	result.expressionType = Expression.SHOULD_BE_BOOL;
             }
             default: error( currentToken );
         }
