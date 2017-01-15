@@ -545,7 +545,24 @@ public class Parser
                 op = processOperation();
                 break;
             }
-
+	    case Token.AND:
+            {
+                match( Token.AND ); 
+                op = processOperation();
+                break;
+            }
+            case Token.OR:
+            {
+                match( Token.OR ); 
+                op = processOperation();
+                break;
+            }
+            case Token.NOT:
+            {
+                match( Token.NOT ); 
+                op = processOperation();
+                break;
+            }
             default: error( currentToken );
         }
         return op;
