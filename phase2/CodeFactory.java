@@ -504,6 +504,10 @@ class CodeFactory {
 		System.out.println("\n__minus:  .byte '-'");
 		System.out.println("__negOne: .int -1");
 		System.out.println("__negFlag: .byte '+'");
+		if (usesWriteBool) {
+			System.out.println("_true:\t.string \"True\"");
+			System.out.println("_false:\t.string \"False\"");
+		}
 	}
 
 	private String createTempName() {
