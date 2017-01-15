@@ -620,6 +620,20 @@ public class Parser
         	return new StringExpression(StringExpression.IDEXPR, literalVar);
     	}
     }
+	
+    private Expression processBoolLiteral() {
+        if (previousToken.getType() != Token.BOOLEANLITERAL) {
+    		Parser.signSet = false;
+    		return new Expression(); // No valid literal to process
+	}
+        int value;
+        if (previousToken.getId().toLowerCase().equals("true")) {
+            value = 1;
+        } else {
+            value = 0;
+        }
+        return new Expression( Expression.BOOLLITERALEXPR, previousToken.getId(), value);
+    }
     
     private Operation processOperation()
     {
