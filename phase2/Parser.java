@@ -374,6 +374,7 @@ public class Parser
     	}
     	case Token.NOT:
     	{
+    		match(Token.NOT);
     		result = codeFactory.generateNegation( boolPrimary() );
     		break;
     	}
@@ -498,6 +499,7 @@ public class Parser
             case Token.BOOLEANLITERAL:	case Token.NOT:
             {
             	result.expressionType = Expression.SHOULD_BE_BOOL;
+            	break;
             }
             default: error( currentToken );
         }

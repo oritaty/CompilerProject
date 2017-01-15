@@ -63,11 +63,39 @@ class CodeFactory {
 	}
 	
 	Expression generateBoolExpr(Expression left, Expression right, Operation op) {
-		return null;	// TODO: implement with assembly code
+		Expression tempExpr = new Expression(Expression.BOOLTEMPEXPR, createBoolTemp());
+		if (right.expressionType == Expression.BOOLLITERALEXPR) {
+			System.out.println("\tMOVB " + "$" + right.expressionIntValue + ", %bl");
+		} else {
+			System.out.println("\tMOVB " + right.expressionName + ", %bl");
+		}
+		if (left.expressionType == Expression.BOOLLITERALEXPR) {
+			System.out.println("\tMOVB " + "$" + left.expressionIntValue + ", %al");
+		} else {
+			System.out.println("\tMOVB " + left.expressionName + ", %al");
+		}
+		String targetReg = "%al, ";
+		if (op.opType == Token.OR) {
+			System.out.print("\tORB %bl, %al");
+		} else if (op.opType == Token.AND) {
+			System.out.print("\tANDB %bl, %al");
+		}
+		System.out.println("\t/* Bitwise operation acts as logical for 0-1 */");
+		System.out.println("\tMOVB " + targetReg + tempExpr.expressionName);
+		return tempExpr;
 	}
 	
 	Expression generateNegation( Expression boolExpr ) {
-		return null;	// TOOD: implement with assembly code
+		Expression tempExpr = new Expression(Expression.BOOLTEMPEXPR, createBoolTemp());
+		if (boolExpr.expressionType == Expression.BOOLLITERALEXPR) {
+			System.out.println("\tMOVB " + "$" + boolExpr.expressionIntValue + ", %al");
+		} else {
+			System.out.println("\tMOVB " + boolExpr.expressionName + ", %al");
+		}
+		System.out.println("\tNOTB %al\t/*Bitwise operation acts as logical for 0-1 */");
+		System.out.println("\tMOVB %al, " + tempExpr.expressionName);
+		
+		return tempExpr;
 	}
 	
 	// Call a helper assembly method to concatenate two strings into a temporary string
@@ -520,6 +548,13 @@ class CodeFactory {
 	public String createStringTemp() {
 		String tempVar = new String("__temp" + tempCount++);
 		stringVariablesList.add(tempVar);
+		return tempVar;
+	}
+	
+	// Modification of createTempName
+	private String createBoolTemp() {
+		String tempVar = new String("__temp" + tempCount++);
+		booleanVariablesList.add(tempVar);
 		return tempVar;
 	}
 
