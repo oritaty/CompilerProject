@@ -629,6 +629,9 @@ public class Parser
 	else if ( previousToken.getType() == Token.MULT ) op.opType = Token.MULT;
         else if ( previousToken.getType() == Token.DIV ) op.opType = Token.DIV;
         else if ( previousToken.getType() == Token.MOD ) op.opType = Token.MOD;
+	else if ( previousToken.getType() == Token.OR ) op.opType = Token.OR;//add
+        else if ( previousToken.getType() == Token.AND ) op.opType = Token.AND;//add
+        else if ( previousToken.getType() == Token.NOT ) op.opType = Token.NOT;//add
         else error( previousToken );
         return op;
     }
