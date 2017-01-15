@@ -255,6 +255,10 @@ public class Parser
     		// String expression
     		StringExpression expr = stringExpression();
     		codeFactory.generateStringWrite(expr);
+    	} else if (currentToken.getType() == Token.BOOLEANLITERAL || currentToken.getType() == Token.NOT
+    			|| (currentToken.getType() == Token.ID && symbolTable.getType(currentToken.getId()) == Token.BOOLEAN)) {
+    		Expression expr = boolExpression();
+    		codeFactory.generateBoolWrite(expr);
     	} else {
     		// Int or boolean expression
     		Expression expr = expression(true);
@@ -352,6 +356,7 @@ public class Parser
     			System.out.println("Type error! Variable '" + previousToken.getId() + "' is not a boolean at line "
     					+ scanner.getLineNumber());
     		result = idExpr;
+    		result.expressionType = Expression.BOOLIDEXPR;
     		break;
     	}
     	case Token.LPAREN:
@@ -363,6 +368,7 @@ public class Parser
     	}
     	case Token.BOOLEANLITERAL:
     	{
+    		match(Token.BOOLEANLITERAL);
     		result = processBoolLiteral();
     		break;
     	}
@@ -426,6 +432,8 @@ public class Parser
             {
                 match( Token.LPAREN );
                 result = expression(false);
+                if (result.expressionType == Expression.SHOULD_BE_BOOL)
+                	return result;
                 match( Token.RPAREN );
                 break;
             }

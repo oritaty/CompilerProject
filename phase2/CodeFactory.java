@@ -105,8 +105,8 @@ class CodeFactory {
 			System.out.println("\tmovb " + expr.expressionName + ", %al");
 			break;
 		}
-		case Expression.LITERALEXPR: {
-			System.out.println("\tmovb $" + expr.expressionName + ", %al");
+		case Expression.BOOLLITERALEXPR: {
+			System.out.println("\tmovb $" + expr.expressionIntValue + ", %al");
 		}
 		}
 		System.out.println("\tpushl %eax");
