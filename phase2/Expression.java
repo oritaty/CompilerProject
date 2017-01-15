@@ -3,6 +3,7 @@ public class Expression
     public final static int IDEXPR = 0;
     public final static int LITERALEXPR = 1;
     public final static int TEMPEXPR = 2;
+    public final static int SHOULD_BE_BOOL = 3;
     
     public int expressionType;
     public String expressionName;

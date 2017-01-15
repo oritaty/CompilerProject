@@ -17,6 +17,14 @@ public class Scanner
   //  private boolean done;
     private int currentLocation;
     
+    public int getCurrentLocation() {
+    	return currentLocation;
+    }
+    
+    public void setCurrentLocation(int revertLocation) {
+    	currentLocation = revertLocation;
+    }
+    
     public Scanner(String fname)
     {
         currentLineNumber = 1;
