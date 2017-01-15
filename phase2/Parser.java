@@ -258,7 +258,12 @@ public class Parser
     	} else {
     		// Int or boolean expression
     		Expression expr = expression(true);
-    		codeFactory.generateWrite(expr);
+    		if (expr.expressionType >= Expression.BOOLIDEXRP) {
+    			//write bool
+    		} else {
+    			// write int expression
+    			codeFactory.generateWrite(expr);
+    		}
     	}
     }
     
@@ -300,8 +305,75 @@ public class Parser
         return result;
     }
     
+    // Modified version of expression(), to handle boolean expressions instead of int expressions
     private Expression boolExpression() {
-    	return null;	// TODO: implement this
+    	Expression result;
+        Expression leftOperand;
+        Expression rightOperand;
+        Operation op;
+        
+        result = boolTerm();
+        
+        while ( currentToken.getType() == Token.OR ) {
+        	leftOperand = result;
+        	op = addOperation();
+        	rightOperand = boolTerm();
+        	result = codeFactory.generateBoolExpr( leftOperand, rightOperand, op );
+        }
+        
+    	return result;
+    }
+    
+    private Expression boolTerm() {
+    	Expression result;
+        Expression leftOperand;
+        Expression rightOperand;
+        Operation op;
+        
+        result = boolPrimary();
+        
+        while ( currentToken.getType() == Token.AND ) {
+        	leftOperand = result;
+        	op = addOperation();
+        	rightOperand = boolPrimary();
+        	result = codeFactory.generateBoolExpr( leftOperand, rightOperand, op );
+        }
+        
+        return result;
+    }
+    
+    private Expression boolPrimary() {
+    	Expression result = new Expression();
+    	switch (currentToken.getType()) {
+    	case Token.ID:
+    	{
+    		Expression idExpr = identifier(false);
+    		if (symbolTable.getType(previousToken.getId()) != Token.BOOLEAN)
+    			System.out.println("Type error! Variable '" + previousToken.getId() + "' is not a boolean at line "
+    					+ scanner.getLineNumber());
+    		result = idExpr;
+    		break;
+    	}
+    	case Token.LPAREN:
+    	{
+    		match( Token.LPAREN );
+            result = boolExpression();
+            match( Token.RPAREN );
+            break;
+    	}
+    	case Token.BOOLEANLITERAL:
+    	{
+    		result = processBoolLiteral();
+    		break;
+    	}
+    	case Token.NOT:
+    	{
+    		result = codeFactory.generateNegation( boolPrimary() );
+    		break;
+    	}
+    	default:	error(currentToken);
+    	}
+    	return result;
     }
     
     private Expression factor()
@@ -455,7 +527,7 @@ public class Parser
                 op = processOperation();
                 break;
             }
-	    case Token.MULT:
+            case Token.MULT:
             {
                 match( Token.MULT ); 
                 op = processOperation();

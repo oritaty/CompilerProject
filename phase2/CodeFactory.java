@@ -62,6 +62,14 @@ class CodeFactory {
 		return tempExpr;
 	}
 	
+	Expression generateBoolExpr(Expression left, Expression right, Operation op) {
+		return null;	// TODO: implement with assembly code
+	}
+	
+	Expression generateNegation( Expression boolExpr ) {
+		return null;	// TOOD: implement with assembly code
+	}
+	
 	// Call a helper assembly method to concatenate two strings into a temporary string
 	StringExpression generateConcatExpr(StringExpression left, StringExpression right) {
 		String resultName = createStringTemp();

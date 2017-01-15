@@ -5,6 +5,10 @@ public class Expression
     public final static int TEMPEXPR = 2;
     public final static int SHOULD_BE_BOOL = 3;
     
+    public final static int BOOLIDEXRP = 4;
+    public final static int BOOLLITERALEXRP = 5;
+    public final static int BOOLTEMPEXPR = 6;
+    
     public int expressionType;
     public String expressionName;
     public int expressionIntValue;
