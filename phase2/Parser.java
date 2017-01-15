@@ -95,13 +95,19 @@ public class Parser
             {
                 lValue = identifier(false);
                 match( Token.ASSIGNOP );
-                // Added conditional here to determine whether to match int or string expression
+                // Added conditional here to determine whether to match int, string, or boolean expression
                 if (symbolTable.getType(lValue.expressionName) == Token.STRING) {
                 	stringExpr = stringExpression();
                 	codeFactory.generateStringAssignment( new StringExpression(0, lValue.expressionName), stringExpr );
+                } else if (symbolTable.getType(lValue.expressionName) == Token.BOOLEAN) {
+                	expr = boolExpression();
+                	codeFactory.generateBoolAssignment( lValue, expr );
                 } else {
                 	expr = expression(true);
-                	codeFactory.generateAssignment( lValue, expr );
+                	if (expr.expressionType > 2)
+                		System.out.println("Cannot assign non-int expression to int, at line " + scanner.getLineNumber());
+                	else
+                		codeFactory.generateAssignment( lValue, expr );
                 }
                 match( Token.SEMICOLON );
                 break;

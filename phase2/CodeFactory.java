@@ -350,6 +350,16 @@ class CodeFactory {
 		}
 	}
 	
+	void generateBoolAssignment( Expression lValue, Expression expr ) {
+		if (expr.expressionType == Expression.BOOLLITERALEXPR) {
+			System.out.println("\tMOVB " + "$" + expr.expressionIntValue + ", %al");
+			System.out.println("\tMOVB %al, " + lValue.expressionName);
+		} else {
+			System.out.println("\tMOVB " + expr.expressionName + ", %al");
+			System.out.println("\tMOVB %al, " + lValue.expressionName);
+		}
+	}
+	
 	void generateStringAssignment( StringExpression lValue, StringExpression expr) {
 		System.out.println("\n\tPUSHL $" + expr.expressionName); // Push source address
 		System.out.println("\tPUSHL $" + lValue.expressionName); // Push destination address
