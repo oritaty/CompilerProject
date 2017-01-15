@@ -9,7 +9,7 @@ class CodeFactory {
 	private static boolean firstWrite = true;
 	
 	private SymbolTable symbolTable; // Reference to the symbol table in Parser
-	private boolean usesStrCpy, usesWriteStr, usesConcat, usesReadStr;
+	private boolean usesStrCpy, usesWriteStr, usesConcat, usesReadStr, usesWriteBool;
 
 	public CodeFactory(SymbolTable symbolTable) {
 		tempCount = 0;
@@ -93,6 +93,26 @@ class CodeFactory {
 			generateAssemblyCodeForWriting("$" + expr.expressionName);
 		}
 		}
+	}
+	
+	// Use helper method to write "True" or "False" to output
+	void generateBoolWrite(Expression expr) {
+		System.out.println("\t/* Write bool */");
+		System.out.println("\txorl %eax, %eax");
+		switch (expr.expressionType) {
+		case Expression.BOOLIDEXPR:
+		case Expression.BOOLTEMPEXPR: {
+			System.out.println("\tmovb " + expr.expressionName + ", %al");
+			break;
+		}
+		case Expression.LITERALEXPR: {
+			System.out.println("\tmovb $" + expr.expressionName + ", %al");
+		}
+		}
+		System.out.println("\tpushl %eax");
+		System.out.println("\tcall __writeBool");
+		
+		usesWriteBool = true;
 	}
 	
 	void generateStringWrite(StringExpression expr) {
@@ -416,6 +436,30 @@ class CodeFactory {
 			System.out.println("\tpopl %eax");
 			System.out.println("\tsubl %eax, %ecx		/* Subtract start address to get string length */");
 			System.out.println("\tmovl %ecx, 256(%eax)	/* Store string length in corresponding length variable */");
+			System.out.println("\tret");
+		}
+		
+		// Add __writeBool method if needed
+		if (usesWriteBool) {
+			System.out.println("\n/* Method to write \"true\" or \"false\" for a boolean value */");
+			System.out.println("__writeBool:");
+			System.out.println("\tpopl %ecx");
+			System.out.println("\tpopl %eax");
+			System.out.println("\tpushl %ecx");
+			System.out.println("\tcmpb $0, %al");
+			System.out.println("\tje __writeFalse		/* Write \"false\" if x == 0, \"true\" otherwise */");
+			System.out.println("\n\tmovl $4, %eax");
+			System.out.println("\tmovl $1, %ebx");
+			System.out.println("\tmovl $_true, %ecx");
+			System.out.println("\tmovl $4, %edx");
+			System.out.println("\tint $0x80");
+			System.out.println("\tret");
+			System.out.println("\n__writeFalse:");
+			System.out.println("\tmovl $4, %eax");
+			System.out.println("\tmovl $1, %ebx");
+			System.out.println("\tmovl $_false, %ecx");
+			System.out.println("\tmovl $5, %edx");
+			System.out.println("\tint $0x80");
 			System.out.println("\tret");
 		}
 	}

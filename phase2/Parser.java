@@ -258,8 +258,8 @@ public class Parser
     	} else {
     		// Int or boolean expression
     		Expression expr = expression(true);
-    		if (expr.expressionType >= Expression.BOOLIDEXRP) {
-    			//write bool
+    		if (expr.expressionType >= Expression.BOOLIDEXPR) {
+    			codeFactory.generateBoolWrite(expr);
     		} else {
     			// write int expression
     			codeFactory.generateWrite(expr);
