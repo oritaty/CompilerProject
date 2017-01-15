@@ -246,7 +246,7 @@ public class Scanner
     {
         return( ch == ' ' || ch == '\n' || ch == '\t' || ch == ';' | ch == '+' ||
                 ch == '-' || ch == '(' || ch == ')' || ch == ','  || ch == ':' ||
-                ch == '|' || ch == '*' || ch == '/' || ch == '%');
+                ch == '|' || ch == '*' || ch == '/' || ch == '%' || ch == '~');
     }
 
     //Test
