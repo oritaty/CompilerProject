@@ -106,8 +106,8 @@ public class Scanner
                     return null;
                 }
                 currentLocation = 0;
+                return findNextToken();
             }
-            return findNextToken();
         }
         
         int i = currentLocation;

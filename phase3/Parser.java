@@ -230,20 +230,20 @@ public class Parser
     	codeFactory.generateBoolAssignment( new Expression(4, "_condition"), condition );
     	int ifNumber = codeFactory.generateIf();
     	int blockStartLine = scanner.getLineNumber();	// For error message only
-    	match(Token.LBRACE);
+    	match(Token.LEFT_CURLY_BRACE);
     	statementList(true);
     	if (currentToken.getType() == Token.END || currentToken.getType() == Token.EOF)
     		System.out.println("Syntax error! Unmatched { token at line " + blockStartLine);
-    	match(Token.RBRACE);
+    	match(Token.RIGHT_CURLY_BRACE);
     	codeFactory.generateElse(ifNumber);
     	if (currentToken.getType() == Token.ELSE) {
     		match(Token.ELSE);
     		blockStartLine = scanner.getLineNumber();
-    		match(Token.LBRACE);
+    		match(Token.LEFT_CURLY_BRACE);
     		statementList(true);
     		if (currentToken.getType() == Token.END || currentToken.getType() == Token.EOF)
         		System.out.println("Syntax error! Unmatched { token at line " + blockStartLine);
-    		match(Token.RBRACE);
+    		match(Token.RIGHT_CURLY_BRACE);
     	}
     	codeFactory.generateEndIf(ifNumber);
     }
@@ -258,11 +258,11 @@ public class Parser
     	codeFactory.generateBoolAssignment( new Expression(4, "_condition"), condition );
     	codeFactory.generateWhileBody(whileNumber);
     	int blockStartLine = scanner.getLineNumber();	// For error message only
-    	match(Token.LBRACE);
+    	match(Token.LEFT_CURLY_BRACE);
     	statementList(true);
     	if (currentToken.getType() == Token.END || currentToken.getType() == Token.EOF)
     		System.out.println("Syntax error! Unmatched { token at line " + blockStartLine);
-    	match(Token.RBRACE);
+    	match(Token.RIGHT_CURLY_BRACE);
     	codeFactory.generateEndWhile(whileNumber);
     }
     
