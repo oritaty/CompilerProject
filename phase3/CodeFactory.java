@@ -574,6 +574,7 @@ class CodeFactory {
 		System.out.println("\n__minus:  .byte '-'");
 		System.out.println("__negOne: .int -1");
 		System.out.println("__negFlag: .byte '+'");
+		System.out.println("_condition:\t.byte 0");	// Added _condition temporary variable for all control conditions
 		if (usesWriteBool) {
 			System.out.println("_true:\t.string \"True\"");
 			System.out.println("_false:\t.string \"False\"");
