@@ -579,6 +579,43 @@ public class Parser
                 op = processOperation();
                 break;
             }
+	    //Added for phase 3
+            case Token.EQUAL:
+            {
+                match( Token.EQUAL );
+                op = processOperation();
+                break;
+            }
+            case Token.NOT_EQUAL:
+            {
+                match( Token.NOT_EQUAL );
+                op = processOperation();
+                break;
+            }
+            case Token.GREATER_OR_EQUAL:
+            {
+                match( Token.GREATER_OR_EQUAL );
+                op = processOperation();
+                break;
+            }
+            case Token.GREATER:
+            {
+                match( Token.GREATER );
+                op = processOperation();
+                break;
+            }
+            case Token.SMALLER_OR_EQUAL:
+            {
+                match( Token.SMALLER_OR_EQUAL );
+                op = processOperation();
+                break;
+            }
+            case Token.SMALLER:
+            {
+                match( Token.SMALLER );
+                op = processOperation();
+                break;
+            }
             default: error( currentToken );
         }
         return op;
@@ -679,6 +716,11 @@ public class Parser
 	else if ( previousToken.getType() == Token.OR ) op.opType = Token.OR;//add
         else if ( previousToken.getType() == Token.AND ) op.opType = Token.AND;//add
         else if ( previousToken.getType() == Token.NOT ) op.opType = Token.NOT;//add
+	else if ( previousToken.getType() == Token.EQUAL ) op.opType = Token.EQUAL;//add
+        else if ( previousToken.getType() == Token.NOT_EQUAL ) op.opType = Token.NOT_EQUAL;//add
+        else if ( previousToken.getType() == Token.GREATER_OR_EQUAL ) op.opType = Token.GREATER_OR_EQUAL;//add
+        else if ( previousToken.getType() == Token.GREATER ) op.opType = Token.GREATER;//add
+        else if ( previousToken.getType() == Token.SMALLER_OR_EQUAL ) op.opType = Token.SMALLER_OR_EQUAL;//add
         else error( previousToken );
         return op;
     }
