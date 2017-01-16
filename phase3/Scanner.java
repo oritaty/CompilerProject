@@ -188,6 +188,42 @@ public class Scanner
         	}
         } 
         
+        else if (currentLine.charAt(i) == '=' && i+1 < len && currentLine.charAt(i+1) == '=') {
+            tokenStr = "==";
+            tokenType = Token.EQUAL;
+            i+=2;
+        }
+        
+        else if (currentLine.charAt(i) == '!' && i+1 < len && currentLine.charAt(i+1) == '=') {
+            tokenStr = "!=";
+            tokenType = Token.NOT_EQUAL;
+            i+=2;
+        }
+        
+        else if (currentLine.charAt(i) == '>') {
+            if (i+1 < len && currentLine.charAt(i+1) == '=') {
+                tokenStr = ">=";
+                tokenType = Token.GREATER_OR_EQUAL;
+                i+=2;
+            } else {
+                tokenStr = ">";
+                tokenType = Token.GREATER;
+                i++;
+            }
+        }
+        
+        else if (currentLine.charAt(i) == '<') {
+            if (i+1 < len && currentLine.charAt(i+1) == '=') {
+                tokenStr = "<=";
+                tokenType = Token.SMALLER_OR_EQUAL;
+                i+=2;
+            } else {
+                tokenStr = "<";
+                tokenType = Token.SMALLER;
+                i++;
+            }
+        }
+        
         /*
         else if (i+2 < len && currentLine.substring(0, 3).equals("int")) {
             tokenStr = "int";
@@ -264,7 +300,8 @@ public class Scanner
     {
         return( ch == ' ' || ch == '\n' || ch == '\t' || ch == ';' | ch == '+' ||
                 ch == '-' || ch == '(' || ch == ')' || ch == ','  || ch == ':' ||
-                ch == '|' || ch == '*' || ch == '/' || ch == '%' || ch == '~');
+                ch == '|' || ch == '*' || ch == '/' || ch == '%' || ch == '~' ||
+                ch == '=' || ch == '<' || ch == '>' || ch == '!');
     }
 
     //Test
