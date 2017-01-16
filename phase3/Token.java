@@ -34,6 +34,15 @@ public class Token {
     public final static int AND = 26;
     public final static int OR = 27;
     
+    //Added for phase 3
+    public static final int EQUAL = 28;
+    public static final int NOT_EQUAL = 29;
+    public static final int GREATER = 30;
+    public static final int GREATER_OR_EQUAL = 31;
+    public static final int SMALLER = 32;
+    public static final int SMALLER_OR_EQUAL = 33;
+    public static final int WHILE = 34;
+    
     public Token( String tokenString, int tokenType)
     {
         id = tokenString;
@@ -96,6 +105,15 @@ public class Token {
             case NOT : str = "NOT"; break;
             case AND : str = "AND"; break;
             case OR  : str = "OR"; break;
+                
+            //Added for phase 3
+            case EQUAL : str = "EQUAL"; break;
+            case NOT_EQUAL : str = "EQUAL"; break;
+            case GREATER : str = "EQUAL"; break;
+            case GREATER_OR_EQUAL : str = "EQUAL"; break;
+            case SMALLER : str = "EQUAL"; break;
+            case SMALLER_OR_EQUAL : str = "EQUAL"; break;
+            case WHILE : str = "EQUAL"; break;
             
             default: str = "Lexical Error";
         }
