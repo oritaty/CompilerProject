@@ -6,6 +6,7 @@ class CodeFactory {
 	private static ArrayList<String> stringVariablesList;
 	private static ArrayList<String> booleanVariablesList;
 	private static int labelCount = 0;
+	private static int controlCount = 0;
 	private static boolean firstWrite = true;
 	
 	private SymbolTable symbolTable; // Reference to the symbol table in Parser
@@ -31,6 +32,37 @@ class CodeFactory {
 		booleanVariablesList.add(token.getId());
 	}
 
+	// Added phase 3: if statement generation
+	int generateIf() {
+		int id = controlCount++;
+		System.out.println("\tcmp $1, _condition");
+		System.out.println("\tjne __else" + id);
+		return id;
+	}
+	void generateElse(int id) {
+		System.out.println("\tjmp __endif" + id);
+		System.out.println("__else" + id + ":");
+	}
+	void generateEndIf(int id) {
+		System.out.println("__endif" + id + ":");
+	}
+	
+	// Added phase 3: while statement generation
+	int generateWhile() {
+		int id = controlCount++;
+		System.out.println("__while" + id + ":");
+		return id;
+	}
+	void generateWhileBody(int id) {
+		System.out.println("\tcmpb $1, _condition");
+		System.out.println("\tjne __endwhile" + id);
+	}
+	void generateEndWhile(int id) {
+		System.out.println("\tjmp __while" + id);
+		System.out.println("__endwhile" + id + ":");
+	}
+	
+	
 	Expression generateArithExpr(Expression left, Expression right, Operation op) {
 		Expression tempExpr = new Expression(Expression.TEMPEXPR, createTempName());
 		if (right.expressionType == Expression.LITERALEXPR) {
