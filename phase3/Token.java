@@ -42,6 +42,10 @@ public class Token {
     public static final int SMALLER = 32;
     public static final int SMALLER_OR_EQUAL = 33;
     public static final int WHILE = 34;
+    public static final int LEFT_CURLY_BRACE = 35;
+    public static final int RIGHT_CURLY_BRACE = 36;
+    public static final int IF = 37;
+    public static final int ELSE = 38;
     
     public Token( String tokenString, int tokenType)
     {
@@ -108,12 +112,16 @@ public class Token {
                 
             //Added for phase 3
             case EQUAL : str = "EQUAL"; break;
-            case NOT_EQUAL : str = "EQUAL"; break;
-            case GREATER : str = "EQUAL"; break;
-            case GREATER_OR_EQUAL : str = "EQUAL"; break;
-            case SMALLER : str = "EQUAL"; break;
-            case SMALLER_OR_EQUAL : str = "EQUAL"; break;
-            case WHILE : str = "EQUAL"; break;
+            case NOT_EQUAL : str = "NOT_EQUAL"; break;
+            case GREATER : str = "GREATER"; break;
+            case GREATER_OR_EQUAL : str = "GREATER_OR_EQUAL"; break;
+            case SMALLER : str = "SMALLER"; break;
+            case SMALLER_OR_EQUAL : str = "SMALLER_OR_EQUAL"; break;
+            case WHILE : str = "WHILE"; break;
+            case LEFT_CURLY_BRACE : str = "LEFT_CURLY_BRACE"; break;
+            case RIGHT_CURLY_BRACE : str = "RIGHT_CURLY_BRACE"; break;
+            case IF : str = "IF"; break;
+            case ELSE : str = "ELSE"; break;
             
             default: str = "Lexical Error";
         }
