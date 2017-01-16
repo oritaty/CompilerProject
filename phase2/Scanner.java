@@ -90,8 +90,26 @@ public class Scanner
             } 
             currentLocation = 0;
         }
-        while ( Character.isWhitespace( currentLine.charAt(currentLocation)))
+        while ( Character.isWhitespace( currentLine.charAt(currentLocation))) {
             currentLocation++;
+            if ( currentLocation == len )// characters on currentLine used up
+            {
+                currentLine = nextLine;
+                currentLineNumber++;
+                try
+                {
+                    nextLine = bufReader.readLine();
+                }
+                catch (IOException e)
+                {
+                    System.out.println(e);
+                    return null;
+                }
+                currentLocation = 0;
+            }
+            return findNextToken();
+        }
+        
         int i = currentLocation;
         if (currentLine.charAt(i) == ';')
         {
