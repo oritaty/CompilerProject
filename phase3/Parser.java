@@ -676,18 +676,6 @@ public class Parser
                 op = processOperation();
                 break;
             }
-	    case Token.LEFT_CURLY_BRACE:
-            {
-                match( Token.LEFT_CURLY_BRACE );
-                op = processOperation();
-                break;
-            }
-            case Token.RIGHT_CURLY_BRACE:
-            {
-                match( Token.RIGHT_CURLY_BRACE );
-                op = processOperation();
-                break;
-            }
             default: error( currentToken );
         }
         return op;
@@ -793,8 +781,6 @@ public class Parser
         else if ( previousToken.getType() == Token.GREATER_OR_EQUAL ) op.opType = Token.GREATER_OR_EQUAL;//add
         else if ( previousToken.getType() == Token.GREATER ) op.opType = Token.GREATER;//add
         else if ( previousToken.getType() == Token.SMALLER_OR_EQUAL ) op.opType = Token.SMALLER_OR_EQUAL;//add
-	else if ( previousToken.getType() == Token.LEFT_CURLY_BRACE ) op.opType = Token.LEFT_CURLY_BRACE;
-        else if ( previousToken.getType() == Token.RIGHT_CURLY_BRACE ) op.opType = Token.RIGHT_CURLY_BRACE;
         else error( previousToken );
         return op;
     }
