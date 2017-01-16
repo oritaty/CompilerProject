@@ -69,16 +69,21 @@ public class Parser
     {
         match( Token.BEGIN );
         codeFactory.generateStart();
-        statementList();
+        statementList(false);
         match( Token.END );
         codeFactory.generateExit();
     }
     
-    private void statementList()
+    // Modified to take isInsideControl boolean, to disallow declare statements within if / else / while blocks
+    private void statementList(boolean isInsideControl)
     {
         while ( currentToken.getType() == Token.ID || currentToken.getType() == Token.READ || 
-                    currentToken.getType() == Token.WRITE || currentToken.getType() == Token.DECLARE)
+                    currentToken.getType() == Token.WRITE || currentToken.getType() == Token.DECLARE ||
+                    currentToken.getType() == Token.IF || currentToken.getType() == Token.WHILE)
         {
+        	if (isInsideControl && currentToken.getType() == Token.DECLARE)
+        		System.out.println("Error! Declare statements within control blocks are not allowed (line "
+        				+ scanner.getLineNumber() + ")");
             statement();
         }
     }
@@ -202,8 +207,63 @@ public class Parser
                 match( Token.SEMICOLON );
                 break;
             }
+            case Token.IF:
+            {
+            	ifStatement();
+            	break;
+        	}
+            case Token.WHILE:
+            {
+            	whileLoop();
+            	break;
+        	}
             default: error(currentToken);
         }
+    }
+    
+    // Added method to process if block, with a possible else block following
+    private void ifStatement() {
+    	match(Token.IF);
+    	match(Token.LPAREN);
+    	Expression condition = boolExpression();
+    	match(Token.RPAREN);
+    	codeFactory.generateBoolAssignment( new Expression(4, "_condition"), condition );
+    	int ifNumber = codeFactory.generateIf();
+    	int blockStartLine = scanner.getLineNumber();	// For error message only
+    	match(Token.LBRACE);
+    	statementList(true);
+    	if (currentToken.getType() == Token.END || currentToken.getType() == Token.EOF)
+    		System.out.println("Syntax error! Unmatched { token at line " + blockStartLine);
+    	match(Token.RBRACE);
+    	codeFactory.generateElse(ifNumber);
+    	if (currentToken.getType() == Token.ELSE) {
+    		match(Token.ELSE);
+    		blockStartLine = scanner.getLineNumber();
+    		match(Token.LBRACE);
+    		statementList(true);
+    		if (currentToken.getType() == Token.END || currentToken.getType() == Token.EOF)
+        		System.out.println("Syntax error! Unmatched { token at line " + blockStartLine);
+    		match(Token.RBRACE);
+    	}
+    	codeFactory.generateEndIf(ifNumber);
+    }
+    
+    // Added method to process while block
+    private void whileLoop() {
+    	int whileNumber = codeFactory.generateWhile();
+    	match(Token.WHILE);
+    	match(Token.LPAREN);
+    	Expression condition = boolExpression();
+    	match(Token.RPAREN);
+    	codeFactory.generateBoolAssignment( new Expression(4, "_condition"), condition );
+    	codeFactory.generateWhileBody(whileNumber);
+    	int blockStartLine = scanner.getLineNumber();	// For error message only
+    	match(Token.LBRACE);
+    	statementList(true);
+    	if (currentToken.getType() == Token.END || currentToken.getType() == Token.EOF)
+    		System.out.println("Syntax error! Unmatched { token at line " + blockStartLine);
+    	match(Token.RBRACE);
+    	codeFactory.generateEndWhile(whileNumber);
     }
     
 	// New method added to match "int" or "string" in type declarations
