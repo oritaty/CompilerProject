@@ -224,6 +224,18 @@ public class Scanner
             }
         }
         
+        else if(currentLine.charAt(i) == '{') {
+        	tokenStr = "{";
+        	tokenType = Token.LEFT_CURLY_BRACE;
+        	i++;
+        }
+        
+        else if(currentLine.charAt(i) == '}') {
+        	tokenStr = "}";
+        	tokenType = Token.RIGHT_CURLY_BRACE;
+        	i++;
+        }
+        
         /*
         else if (i+2 < len && currentLine.substring(0, 3).equals("int")) {
             tokenStr = "int";
@@ -301,7 +313,8 @@ public class Scanner
         return( ch == ' ' || ch == '\n' || ch == '\t' || ch == ';' | ch == '+' ||
                 ch == '-' || ch == '(' || ch == ')' || ch == ','  || ch == ':' ||
                 ch == '|' || ch == '*' || ch == '/' || ch == '%' || ch == '~' ||
-                ch == '=' || ch == '<' || ch == '>' || ch == '!');
+                ch == '=' || ch == '<' || ch == '>' || ch == '!' || ch == '{' ||
+                ch == '}');
     }
 
     //Test
