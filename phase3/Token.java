@@ -64,6 +64,9 @@ public class Token {
             else if ( temp.compareTo("boolean") == 0) type = BOOLEAN;
             else if ( temp.compareTo("true") == 0) type = BOOLEANLITERAL;
             else if ( temp.compareTo("false") == 0) type = BOOLEANLITERAL;
+            else if ( temp.compareTo("while") == 0) type = WHILE;
+            else if ( temp.compareTo("if") == 0) type = IF;
+            else if ( temp.compareTo("else") == 0) type = ELSE;
         }
     }
     public String getId()
