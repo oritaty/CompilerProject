@@ -35,8 +35,8 @@ class CodeFactory {
 	// Added phase 3: if statement generation
 	int generateIf() {
 		int id = controlCount++;
-		System.out.println("\tcmpb $1, _condition");
-		System.out.println("\tjne __else" + id);
+		System.out.println("\tcmpb $0, _condition");
+		System.out.println("\tje __else" + id);
 		return id;
 	}
 	void generateElse(int id) {
