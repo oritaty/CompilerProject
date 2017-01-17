@@ -136,11 +136,17 @@ class CodeFactory {
 		}
 		String targetReg = "%al, ";
 		if (op.opType == Token.OR) {
-			System.out.print("\tORB %bl, %al");
+			System.out.println("\tORB %bl, %al");
 		} else if (op.opType == Token.AND) {
-			System.out.print("\tANDB %bl, %al");
+			System.out.println("\tANDB %bl, %al");
+		} else if (op.opType == Token.EQUAL) {
+			System.out.println("\tMOVB %al, %cl");
+			System.out.println("\tXORB %cl, %bl");
+			System.out.println("\tMOVB $1, %al");
+			System.out.println("\tSUBB %bl, %al");
+		} else if (op.opType == Token.NOT_EQUAL) {
+			System.out.println("\tXORB %bl, %al");
 		}
-		System.out.println("\t/* Bitwise operation acts as logical for 0-1 */");
 		System.out.println("\tMOVB " + targetReg + tempExpr.expressionName);
 		return tempExpr;
 	}
