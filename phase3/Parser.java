@@ -806,6 +806,7 @@ public class Parser
         else if ( previousToken.getType() == Token.GREATER_OR_EQUAL ) op.opType = Token.GREATER_OR_EQUAL;//add
         else if ( previousToken.getType() == Token.GREATER ) op.opType = Token.GREATER;//add
         else if ( previousToken.getType() == Token.SMALLER_OR_EQUAL ) op.opType = Token.SMALLER_OR_EQUAL;//add
+        else if ( previousToken.getType() == Token.SMALLER ) op.opType = Token.SMALLER;//add
         else error( previousToken );
         return op;
     }
