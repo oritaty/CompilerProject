@@ -91,7 +91,7 @@ class CodeFactory {
 			System.out.println("\tXORL %edx, %edx");
                         System.out.println("\tIDIVL %ebx");
                         targetReg = "%edx, ";
-        } else if (op.opType >= Token.EQUAL && op.opType < Token.SMALLER_OR_EQUAL) {
+        } else if (op.opType >= Token.EQUAL && op.opType <= Token.SMALLER_OR_EQUAL) {
         	// All int comparisons handled here
         	isComparison = true;
         	tempExpr = new Expression(Expression.BOOLTEMPEXPR, createBoolTemp());
