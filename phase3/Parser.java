@@ -400,9 +400,27 @@ public class Parser
         Expression rightOperand;
         Operation op;
         
-        result = boolPrimary();
+        result = boolTerm();
         
         while ( currentToken.getType() == Token.AND ) {
+        	leftOperand = result;
+        	op = addOperation();
+        	rightOperand = boolPrimary();
+        	result = codeFactory.generateBoolExpr( leftOperand, rightOperand, op );
+        }
+        
+        return result;
+    }
+    
+    private Expression boolTerm2() {
+    	Expression result;
+        Expression leftOperand;
+        Expression rightOperand;
+        Operation op;
+        
+        result = boolPrimary();
+        
+        while ( currentToken.getType() == Token.EQUAL || currentToken.getType() == Token.NOT_EQUAL ) {
         	leftOperand = result;
         	op = addOperation();
         	rightOperand = boolPrimary();
