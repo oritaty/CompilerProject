@@ -400,7 +400,7 @@ public class Parser
         Expression rightOperand;
         Operation op;
         
-        result = boolTerm();
+        result = boolTerm2();
         
         while ( currentToken.getType() == Token.AND ) {
         	leftOperand = result;
