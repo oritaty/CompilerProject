@@ -102,10 +102,10 @@ class CodeFactory {
         	switch (op.opType) {
         	case Token.EQUAL:				jumpType = "je "; break;
         	case Token.NOT_EQUAL:			jumpType = "jne "; break;
-        	case Token.GREATER:				jumpType = "jg "; break;
-        	case Token.GREATER_OR_EQUAL:	jumpType = "jge "; break;
-        	case Token.SMALLER:				jumpType = "jl "; break;
-        	case Token.SMALLER_OR_EQUAL:	jumpType = "jle "; break;
+        	case Token.GREATER:				jumpType = "jl "; break;
+        	case Token.GREATER_OR_EQUAL:	jumpType = "jle "; break;
+        	case Token.SMALLER:				jumpType = "jg "; break;
+        	case Token.SMALLER_OR_EQUAL:	jumpType = "jge "; break;
         	}
         	
         	String jumpLabel = createCompareLabel();
