@@ -405,7 +405,7 @@ public class Parser
         while ( currentToken.getType() == Token.AND ) {
         	leftOperand = result;
         	op = addOperation();
-        	rightOperand = boolPrimary();
+        	rightOperand = boolTerm2();
         	result = codeFactory.generateBoolExpr( leftOperand, rightOperand, op );
         }
         
