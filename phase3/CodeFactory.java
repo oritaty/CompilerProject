@@ -119,12 +119,12 @@ class CodeFactory {
 	
 	Expression generateNegation( Expression boolExpr ) {
 		Expression tempExpr = new Expression(Expression.BOOLTEMPEXPR, createBoolTemp());
+		System.out.println("\tMOVB $1, %al");
 		if (boolExpr.expressionType == Expression.BOOLLITERALEXPR) {
-			System.out.println("\tMOVB " + "$" + boolExpr.expressionIntValue + ", %al");
+			System.out.println("\tSUBB " + "$" + boolExpr.expressionIntValue + ", %al");
 		} else {
-			System.out.println("\tMOVB " + boolExpr.expressionName + ", %al");
+			System.out.println("\tSUBB " + boolExpr.expressionName + ", %al");
 		}
-		System.out.println("\tNOTB %al\t/*Bitwise operation acts as logical for 0-1 */");
 		System.out.println("\tMOVB %al, " + tempExpr.expressionName);
 		
 		return tempExpr;
