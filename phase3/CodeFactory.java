@@ -7,6 +7,7 @@ class CodeFactory {
 	private static ArrayList<String> booleanVariablesList;
 	private static int labelCount = 0;
 	private static int controlCount = 0;
+	private static int compareLabelCount = 0;
 	private static boolean firstWrite = true;
 	
 	private SymbolTable symbolTable; // Reference to the symbol table in Parser
@@ -64,7 +65,8 @@ class CodeFactory {
 	
 	
 	Expression generateArithExpr(Expression left, Expression right, Operation op) {
-		Expression tempExpr = new Expression(Expression.TEMPEXPR, createTempName());
+		Expression tempExpr = null;
+		boolean isComparison = false;	// To detect whether tempExpr should be int or bool
 		if (right.expressionType == Expression.LITERALEXPR) {
 			System.out.println("\tMOVL " + "$" + right.expressionName + ", %ebx");
 		} else {
@@ -89,8 +91,34 @@ class CodeFactory {
 			System.out.println("\tXORL %edx, %edx");
                         System.out.println("\tIDIVL %ebx");
                         targetReg = "%edx, ";
-                }
-                System.out.println("\tMOVL " + targetReg + tempExpr.expressionName);
+        } else if (op.opType >= Token.EQUAL && op.opType < Token.SMALLER_OR_EQUAL) {
+        	// All int comparisons handled here
+        	isComparison = true;
+        	tempExpr = new Expression(Expression.BOOLTEMPEXPR, createBoolTemp());
+        	System.out.println("\tmovb $1, " + tempExpr.expressionName);
+        	System.out.println("\tcmpl %eax, %ebx");
+        	
+        	String jumpType = "";
+        	switch (op.opType) {
+        	case Token.EQUAL:				jumpType = "je "; break;
+        	case Token.NOT_EQUAL:			jumpType = "jne "; break;
+        	case Token.GREATER:				jumpType = "jg "; break;
+        	case Token.GREATER_OR_EQUAL:	jumpType = "jge "; break;
+        	case Token.SMALLER:				jumpType = "jl "; break;
+        	case Token.SMALLER_OR_EQUAL:	jumpType = "jle "; break;
+        	}
+        	
+        	String jumpLabel = createCompareLabel();
+        	System.out.println("\t" + jumpType + jumpLabel);
+        	System.out.println("\tmovb $0, " + tempExpr.expressionName);
+        	System.out.println(jumpLabel + ":\n");
+        }
+		
+		if (!isComparison) {
+			// This only applied to expressions evaluating to an int
+			tempExpr = new Expression(Expression.TEMPEXPR, createTempName());
+			System.out.println("\tMOVL " + targetReg + tempExpr.expressionName);
+		}
 		return tempExpr;
 	}
 	
@@ -599,6 +627,11 @@ class CodeFactory {
 		String tempVar = new String("__temp" + tempCount++);
 		booleanVariablesList.add(tempVar);
 		return tempVar;
+	}
+	
+	// Create a name for a temporary label used in comparisons
+	private String createCompareLabel() {
+		return "__compareTrue" + (compareLabelCount++);
 	}
 
 }
