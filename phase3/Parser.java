@@ -417,12 +417,16 @@ public class Parser
     	switch (currentToken.getType()) {
     	case Token.ID:
     	{
-    		Expression idExpr = identifier(false);
-    		if (symbolTable.getType(previousToken.getId()) != Token.BOOLEAN)
-    			System.out.println("Type error! Variable '" + previousToken.getId() + "' is not a boolean at line "
+    		if (symbolTable.getType(currentToken.getId()) == Token.STRING)
+    			System.out.println("Type error! String variable '" + currentToken.getId() + "' used in boolean expression at line "
     					+ scanner.getLineNumber());
-    		result = idExpr;
-    		result.expressionType = Expression.BOOLIDEXPR;
+    		else if (symbolTable.getType(currentToken.getId()) == Token.INT)
+    			result = intComparison();
+    		else {
+    			Expression idExpr = identifier(false);
+	    		result = idExpr;
+	    		result.expressionType = Expression.BOOLIDEXPR;
+    		}
     		break;
     	}
     	case Token.LPAREN:
@@ -444,9 +448,30 @@ public class Parser
     		result = codeFactory.generateNegation( boolPrimary() );
     		break;
     	}
+    	case Token.MINUS: case Token.INTLITERAL:
+    	{
+    		result = intComparison();
+    		break;
+    	}
     	default:	error(currentToken);
     	}
     	return result;
+    }
+    
+    // Added phase 3: grammar for comparison using ==, !=, <=, >=, <, and >
+    private Expression intComparison() {
+        Expression leftOperand;
+        Expression rightOperand;
+        Operation op;
+        
+        leftOperand = expression(false);
+        if (currentToken.getType() < Token.EQUAL || currentToken.getType() > Token.SMALLER_OR_EQUAL)
+        	System.out.println("Syntax error! Expected comparison operator after int expression  at line "
+        			+ scanner.getLineNumber());
+        op = addOperation();
+        rightOperand = expression(false);
+        
+        return codeFactory.generateArithExpr(leftOperand, rightOperand, op);
     }
     
     private Expression factor()
