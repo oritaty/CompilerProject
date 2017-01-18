@@ -494,6 +494,10 @@ public class Parser
         op = addOperation();
         rightOperand = expression(false);
         
+        if (rightOperand.expressionType == Expression.SHOULD_BE_BOOL)
+        	System.out.println("Type error! Cannot compare int to bool at line "
+        			+ scanner.getLineNumber());
+        
         return codeFactory.generateArithExpr(leftOperand, rightOperand, op);
     }
     
