@@ -86,6 +86,11 @@ public class Parser
         				+ scanner.getLineNumber() + ")");
             statement();
         }
+        
+        if (!isInsideControl && currentToken.getType() != Token.END) {
+        	System.out.println("Syntax error! Unexpected token type " + currentToken + " at line "
+        			+ scanner.getLineNumber());
+        }
     }
     
     private void statement()
