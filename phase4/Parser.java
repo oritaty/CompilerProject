@@ -30,6 +30,7 @@ public class Parser
 {
     private static Scanner scanner;
     private static SymbolTable symbolTable;
+    private static FunctionTable functionTable;
     private static CodeFactory codeFactory;
     private Token currentToken;
     private Token previousToken;
@@ -47,8 +48,9 @@ public class Parser
     {
         Parser parser = new Parser();
       //  scanner = new Scanner( args[0]);
-        scanner = new Scanner( "ph3_test_files/test4.txt");
+        scanner = new Scanner( "test.txt");
         symbolTable = new SymbolTable();
+        functionTable = new FunctionTable();
         codeFactory = new CodeFactory(symbolTable); // Pass reference to the symbol table
         parser.parse();
     }
@@ -222,8 +224,30 @@ public class Parser
             	whileLoop();
             	break;
         	}
+            case Token.FUNCTION:
+            {
+            	defineFunction();
+            	break;
+            }
+            case Token.FUNCTION_CALL:
+            {
+            	match ( Token.FUNCTION_CALL );
+            	String function = functionIdentifier(false);
+            	if (function != null)
+            		codeFactory.generateCall(function);
+            	
+            	match(Token.LPAREN);
+            	match(Token.RPAREN);
+            	match(Token.SEMICOLON);
+            	break;
+            }
             default: error(currentToken);
         }
+    }
+    
+    // Added (phase 4) to process a function definition
+    private void defineFunction() {
+    	// TODO: implement this method, with some marker for the change in scope
     }
     
     // Added method to process if block, with a possible else block following
@@ -740,6 +764,12 @@ public class Parser
         return expr;
     }
     
+    // Added (phase 4) for function identifiers
+    private String functionIdentifier(boolean defining) {
+    	match( Token.ID );
+    	return processFunctionIdentifier(defining);
+    }
+    
     private void match( int tokenType)
     {
         previousToken = currentToken;
@@ -837,7 +867,7 @@ public class Parser
         return op;
     }
     
-    private Expression processIdentifier(boolean declaring)
+    private Expression processIdentifier(boolean declaring)	// TODO: have this method check multiple scopes
     {
         Expression expr = new Expression( Expression.IDEXPR, previousToken.getId());
         
@@ -858,6 +888,22 @@ public class Parser
         }
         return expr;
     }
+    
+    // Added (phase 4) to process function identifiers
+    private String processFunctionIdentifier(boolean defining) {	// TODO: have this method use the current scope
+    	String name = previousToken.getId();
+    	if ( functionTable.checkSTforItem(name) ) {
+    		if (defining)
+    			System.out.println("Identifier error! There is already a function named '" + name + "' in this scope (line "
+    					+ scanner.getLineNumber() + ")");
+    	} else if (!defining) {
+    		System.out.println("Identifier error! No function named '" + name + "' in this scope (line "
+    				+ scanner.getLineNumber() + ")");
+    		return null;
+    	}
+    	return name;
+    }
+    
     private void error( Token token )
     {
         System.out.println( "Syntax error! Parsing token type " + token.toString() + " at line number " + 

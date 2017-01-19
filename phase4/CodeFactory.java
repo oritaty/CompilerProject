@@ -32,7 +32,13 @@ class CodeFactory {
 	void generateBooleanDeclaration(Token token) {
 		booleanVariablesList.add(token.getId());
 	}
-
+	
+	// Added phase 4: function call generation
+	void generateCall(String functionName) {
+		System.out.println("\tCALL " + functionName);
+	}
+	
+	
 	// Added phase 3: if statement generation
 	int generateIf() {
 		int id = controlCount++;
