@@ -81,10 +81,14 @@ public class Parser
     {
         while ( currentToken.getType() == Token.ID || currentToken.getType() == Token.READ || 
                     currentToken.getType() == Token.WRITE || currentToken.getType() == Token.DECLARE ||
-                    currentToken.getType() == Token.IF || currentToken.getType() == Token.WHILE)
+                    currentToken.getType() == Token.IF || currentToken.getType() == Token.WHILE ||
+                    currentToken.getType() == Token.FUNCTION || currentToken.getType() == Token.FUNCTION_CALL)
         {
         	if (isInsideControl && currentToken.getType() == Token.DECLARE)
         		System.out.println("Error! Declare statements within control blocks are not allowed (line "
+        				+ scanner.getLineNumber() + ")");
+        	else if (isInsideControl && currentToken.getType() == Token.FUNCTION)
+        		System.out.println("Error! Functions cannot be defined within control blocks (line "
         				+ scanner.getLineNumber() + ")");
             statement();
         }
@@ -247,7 +251,20 @@ public class Parser
     
     // Added (phase 4) to process a function definition
     private void defineFunction() {
-    	// TODO: implement this method, with some marker for the change in scope
+    	// TODO: add some marker (LinkedList?) for the change in scope
+    	match ( Token.FUNCTION );
+    	String function = functionIdentifier(true);
+    	functionTable.addItem(previousToken);
+    	codeFactory.generateFunctionStart(function);
+    	match ( Token.LPAREN );
+    	match ( Token.RPAREN );
+    	int blockStartLine = scanner.getLineNumber();
+    	match ( Token.LEFT_CURLY_BRACE );
+    	statementList(false);
+    	if (currentToken.getType() == Token.END || currentToken.getType() == Token.EOF)
+    		System.out.println("Syntax error! Unmatched { token at line " + blockStartLine);
+    	match ( Token.RIGHT_CURLY_BRACE );
+    	codeFactory.generateFunctionEnd(function);
     }
     
     // Added method to process if block, with a possible else block following

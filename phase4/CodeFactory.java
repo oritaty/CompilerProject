@@ -38,6 +38,25 @@ class CodeFactory {
 		System.out.println("\tCALL " + functionName);
 	}
 	
+	// Added phase 4: instructions at start of function definition
+	void generateFunctionStart(String functionName) {
+		System.out.println("\tjmp " + functionName + "__end");
+		System.out.println(functionName + ":");
+		System.out.println("\tpushl %eax");
+		System.out.println("\tpushl %ebx");
+		System.out.println("\tpushl %ecx");
+		System.out.println("\tpushl %edx");
+	}
+	
+	// Added phase 4: instructions at start of function definition
+	void generateFunctionEnd(String functionName) {
+		System.out.println("\tpopl %edx");
+		System.out.println("\tpopl %ecx");
+		System.out.println("\tpopl %ebx");
+		System.out.println("\tpopl %eax");
+		System.out.println("\tret");
+		System.out.println(functionName + "__end:");
+	}
 	
 	// Added phase 3: if statement generation
 	int generateIf() {
