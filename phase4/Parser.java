@@ -25,9 +25,10 @@
    <system goal>    -> <program> EofSym #Finish
  */
 
-
+import java.util.*;
 public class Parser
 {
+    private static LinkedList<String> functionList;
     private static Scanner scanner;
     private static SymbolTable symbolTable;
     private static FunctionTable functionTable;
@@ -48,6 +49,7 @@ public class Parser
     {
         Parser parser = new Parser();
       //  scanner = new Scanner( args[0]);
+	functionList = new LinkedList<String>();
         scanner = new Scanner( "test.txt");
         symbolTable = new SymbolTable();
         functionTable = new FunctionTable();
