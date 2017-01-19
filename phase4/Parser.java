@@ -941,7 +941,7 @@ public class Parser
     }
     
     // Added (phase 4) to process function identifiers
-    private String processFunctionIdentifier(boolean defining) {	// TODO: have this method use the current scope
+    private String processFunctionIdentifier(boolean defining) {
     	String prefix = functionList.isEmpty() ? "__" : functionList.getLast() + "__";
     	String name = previousToken.getId();
     	if ( functionTable.checkSTforItem(prefix + name) ) {
@@ -949,9 +949,18 @@ public class Parser
     			System.out.println("Identifier error! There is already a function named '" + name + "' in this scope (line "
     					+ scanner.getLineNumber() + ")");
     	} else if (!defining) {
-    		System.out.println("Identifier error! No function named '" + name + "' in this scope (line "
-    				+ scanner.getLineNumber() + ")");
-    		return null;
+    		if (!functionList.isEmpty()) {
+    			prefix = functionList.size() == 1 ? "__" : functionList.get(functionList.size() - 2) + "__";
+    			if (!functionTable.checkSTforItem(prefix + name)) {
+    				System.out.println("Identifier error! No function named '" + name + "' in this scope or parent scope (line "
+    	    				+ scanner.getLineNumber() + ")");
+    	    		return null;
+    			}
+    		} else {
+	    		System.out.println("Identifier error! No function named '" + name + "' in this scope (line "
+	    				+ scanner.getLineNumber() + ")");
+	    		return null;
+    		}
     	}
     	return prefix + name;
     }
