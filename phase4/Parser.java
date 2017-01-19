@@ -370,13 +370,19 @@ public class Parser
     
     // Added method, to write an individual expression in an expression list
     private void writeExpression() {
+    	String realName = "";
+    	if (currentToken.getType() == Token.ID) {
+    		previousToken = currentToken;
+    		realName = processIdentifier(false).expressionName;
+    	}
+    	
     	if (currentToken.getType() == Token.STRINGLITERAL
-    			|| (currentToken.getType() == Token.ID && symbolTable.getType(currentToken.getId()) == Token.STRING)) {
+    			|| (currentToken.getType() == Token.ID && symbolTable.getType(realName) == Token.STRING)) {
     		// String expression
     		StringExpression expr = stringExpression();
     		codeFactory.generateStringWrite(expr);
     	} else if (currentToken.getType() == Token.BOOLEANLITERAL || currentToken.getType() == Token.NOT
-    			|| (currentToken.getType() == Token.ID && symbolTable.getType(currentToken.getId()) == Token.BOOLEAN)) {
+    			|| (currentToken.getType() == Token.ID && symbolTable.getType(realName) == Token.BOOLEAN)) {
     		Expression expr = boolExpression();
     		codeFactory.generateBoolWrite(expr);
     	} else {
@@ -489,10 +495,12 @@ public class Parser
     	switch (currentToken.getType()) {
     	case Token.ID:
     	{
-    		if (symbolTable.getType(currentToken.getId()) == Token.STRING)
+    		previousToken = currentToken;
+    		String realName = processIdentifier(false).expressionName;
+    		if (symbolTable.getType(realName) == Token.STRING)
     			System.out.println("Type error! String variable '" + currentToken.getId() + "' used in boolean expression at line "
     					+ scanner.getLineNumber());
-    		else if (symbolTable.getType(currentToken.getId()) == Token.INT)
+    		else if (symbolTable.getType(realName) == Token.INT)
     			result = intComparison();
     		else {
     			Expression idExpr = identifier(false);
@@ -606,10 +614,12 @@ public class Parser
             }
             case Token.ID:
             {
-            	if (symbolTable.getType(currentToken.getId()) == Token.BOOLEAN)
+            	previousToken = currentToken;
+            	String realName = processIdentifier(false).expressionName;
+            	if (symbolTable.getType(realName) == Token.BOOLEAN)
             		result.expressionType = Expression.SHOULD_BE_BOOL;
             	else {
-            		if (symbolTable.getType(currentToken.getId()) != Token.INT)
+            		if (symbolTable.getType(realName) != Token.INT)
             			System.out.println("Type error! Variable '" + currentToken.getId() + "' is not an int at line "
             					+ scanner.getLineNumber());
             		result = identifier(false);
@@ -675,8 +685,8 @@ public class Parser
     // Matches a string variable or literal
     private StringExpression stringPrimary() {
     	if (currentToken.getType() == Token.ID) {
-    		identifier(false); // Match the ID token, and check it has been declared
-    		return new StringExpression(StringExpression.IDEXPR, previousToken.getId());
+    		String realName = identifier(false).expressionName; // Match the ID token, and check it has been declared
+    		return new StringExpression(StringExpression.IDEXPR, realName);
     	} else if (currentToken.getType() == Token.STRINGLITERAL) {
     		match(Token.STRINGLITERAL);
     		return processStringLiteral(false);
