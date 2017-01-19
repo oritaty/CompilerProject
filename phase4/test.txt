@@ -1,0 +1,7 @@
+BEGIN
+   DECLARE(int x := 2);
+   FUNCTION writeX () {
+      WRITE(x);
+   }
+   @writeX();
+END
