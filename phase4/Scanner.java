@@ -236,6 +236,13 @@ public class Scanner
         	i++;
         }
         
+        //Added for phase 4.
+        else if (currentLine.charAt(i) == '@') {
+            tokenStr = "@";
+            tokenType = Token.FUNCTION_CALL;
+            i++;
+        }
+        
         /*
         else if (i+2 < len && currentLine.substring(0, 3).equals("int")) {
             tokenStr = "int";
@@ -314,7 +321,7 @@ public class Scanner
                 ch == '-' || ch == '(' || ch == ')' || ch == ','  || ch == ':' ||
                 ch == '|' || ch == '*' || ch == '/' || ch == '%' || ch == '~' ||
                 ch == '=' || ch == '<' || ch == '>' || ch == '!' || ch == '{' ||
-                ch == '}');
+                ch == '}' || ch == '@');
     }
 
     //Test
