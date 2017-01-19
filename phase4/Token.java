@@ -47,6 +47,10 @@ public class Token {
     public static final int IF = 37;
     public static final int ELSE = 38;
     
+    //Added for phase 4
+    public static final int FUNCTION = 39;
+    public static final int FUNCTION_CALL = 40;
+    
     public Token( String tokenString, int tokenType)
     {
         id = tokenString;
@@ -67,6 +71,7 @@ public class Token {
             else if ( temp.compareTo("while") == 0) type = WHILE;
             else if ( temp.compareTo("if") == 0) type = IF;
             else if ( temp.compareTo("else") == 0) type = ELSE;
+            else if ( temp.compareTo("function") == 0) type = FUNCTION;
         }
     }
     public String getId()
@@ -125,6 +130,10 @@ public class Token {
             case RIGHT_CURLY_BRACE : str = "RIGHT_CURLY_BRACE"; break;
             case IF : str = "IF"; break;
             case ELSE : str = "ELSE"; break;
+                
+            //Added for phase 4
+            case FUNCTION : str = "FUNCTION"; break;
+            case FUNCTION_CALL : str = "FUNCTION_CALL"; break;
             
             default: str = "Lexical Error";
         }
