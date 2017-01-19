@@ -11,9 +11,9 @@ class FunctionTable
         st = new Vector<>();
     }
     
-    public void addItem( Token token )
+    public void addItem( String functionName )
     {
-        st.add( token.getId() );
+        st.add( functionName );
         //printAll();
     }
     

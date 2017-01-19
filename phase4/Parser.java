@@ -95,7 +95,7 @@ public class Parser
             statement();
         }
         
-        if (!isInsideControl && currentToken.getType() != Token.END) {
+        if (!isInsideControl && functionList.isEmpty() && currentToken.getType() != Token.END) {
         	System.out.println("Syntax error! Unexpected token type " + currentToken + " at line "
         			+ scanner.getLineNumber());
         }
@@ -253,10 +253,13 @@ public class Parser
     
     // Added (phase 4) to process a function definition
     private void defineFunction() {
-    	// TODO: add some marker (LinkedList?) for the change in scope
     	match ( Token.FUNCTION );
     	String function = functionIdentifier(true);
-    	functionTable.addItem(previousToken);
+    	
+    	// Update function list
+    	functionList.addLast(function);
+    	
+    	functionTable.addItem(function);
     	codeFactory.generateFunctionStart(function);
     	match ( Token.LPAREN );
     	match ( Token.RPAREN );
@@ -267,6 +270,9 @@ public class Parser
     		System.out.println("Syntax error! Unmatched { token at line " + blockStartLine);
     	match ( Token.RIGHT_CURLY_BRACE );
     	codeFactory.generateFunctionEnd(function);
+    	
+    	// Update function list
+    	functionList.removeLast();
     }
     
     // Added method to process if block, with a possible else block following
@@ -886,14 +892,12 @@ public class Parser
         return op;
     }
     
-    private Expression processIdentifier(boolean declaring)	// TODO: have this method check multiple scopes
+    /*private Expression processIdentifier(boolean declaring)
     {
         Expression expr = new Expression( Expression.IDEXPR, previousToken.getId());
         
         if ( ! symbolTable.checkSTforItem( previousToken.getId() ) && !declaring )
         {
-            /*symbolTable.addItem( previousToken );
-            codeFactory.generateDeclaration( previousToken );*/ // This code previously declared variables automatically
            
            // Now, give an error if this isn't a declaration statement and the variable hasn't been declared yet.
            System.out.println("Identifier error! " + previousToken.getId() + " has not been declared at line number " +
@@ -906,12 +910,41 @@ public class Parser
 
         }
         return expr;
+    } */
+    
+    // Rewritten (phase 4) to handle nested scopes
+    private Expression processIdentifier(boolean declaring) {
+    	if (declaring) {
+    		String prefix = functionList.isEmpty() ? "" : functionList.getLast() + "_";
+    		String name = previousToken.getId();
+    		if (symbolTable.checkSTforItem(prefix + name))
+    			System.out.println("Identifier error! Variable name '" + previousToken.getId() + "' is already declared at line number " +
+                        scanner.getLineNumber() );
+    		return new Expression( Expression.IDEXPR, prefix + name );
+    	} else {
+    		String name = previousToken.getId();
+    		String prefix = "";
+    		int i = 0;
+    		for (i = functionList.size() - 1; i >= 0; i--) {
+    			prefix = functionList.get(i) + "_";
+    			if (symbolTable.checkSTforItem(prefix + name))
+    				break;
+    		}
+    		if (i < 0) {
+    			System.out.println("Identifier error! " + previousToken.getId() + " has not been declared at line number " +
+                        scanner.getLineNumber() );
+    			return new Expression( Expression.IDEXPR, name );
+    		} else {
+    			return new Expression( Expression.IDEXPR, prefix + name );
+    		}
+    	}
     }
     
     // Added (phase 4) to process function identifiers
     private String processFunctionIdentifier(boolean defining) {	// TODO: have this method use the current scope
+    	String prefix = functionList.isEmpty() ? "__" : functionList.getLast() + "__";
     	String name = previousToken.getId();
-    	if ( functionTable.checkSTforItem(name) ) {
+    	if ( functionTable.checkSTforItem(prefix + name) ) {
     		if (defining)
     			System.out.println("Identifier error! There is already a function named '" + name + "' in this scope (line "
     					+ scanner.getLineNumber() + ")");
@@ -920,7 +953,7 @@ public class Parser
     				+ scanner.getLineNumber() + ")");
     		return null;
     	}
-    	return name;
+    	return prefix + name;
     }
     
     private void error( Token token )
