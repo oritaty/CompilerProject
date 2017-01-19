@@ -155,7 +155,7 @@ public class Parser
                 type();
                 int declareType = previousToken.getType(); // Token.INT, Token.STRING, or Token.BOOLEAN
                 lValue = identifier(true); // The variable being declared
-                Token varToken = previousToken; // Its identifier token
+                Token varToken = new Token(lValue.expressionName, previousToken.getType()); // Token corresponding to it
                 
                 symbolTable.addItem(varToken, declareType);
                 
@@ -918,20 +918,20 @@ public class Parser
     		String prefix = functionList.isEmpty() ? "" : functionList.getLast() + "_";
     		String name = previousToken.getId();
     		if (symbolTable.checkSTforItem(prefix + name))
-    			System.out.println("Identifier error! Variable name '" + previousToken.getId() + "' is already declared at line number " +
+    			System.out.println("Identifier error! Variable name '" + name + "' is already declared at line number " +
                         scanner.getLineNumber() );
     		return new Expression( Expression.IDEXPR, prefix + name );
     	} else {
     		String name = previousToken.getId();
     		String prefix = "";
     		int i = 0;
-    		for (i = functionList.size() - 1; i >= 0; i--) {
-    			prefix = functionList.get(i) + "_";
+    		for (i = functionList.size() - 1; i >= -1; i--) {
+    			prefix = i < 0 ? "" : functionList.get(i) + "_";
     			if (symbolTable.checkSTforItem(prefix + name))
     				break;
     		}
-    		if (i < 0) {
-    			System.out.println("Identifier error! " + previousToken.getId() + " has not been declared at line number " +
+    		if (i < -1) {
+    			System.out.println("Identifier error! " + name + " has not been declared at line number " +
                         scanner.getLineNumber() );
     			return new Expression( Expression.IDEXPR, name );
     		} else {
