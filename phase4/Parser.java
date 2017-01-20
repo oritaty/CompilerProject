@@ -86,10 +86,15 @@ public class Parser
                     currentToken.getType() == Token.IF || currentToken.getType() == Token.WHILE ||
                     currentToken.getType() == Token.FUNCTION || currentToken.getType() == Token.FUNCTION_CALL)
         {
+		/*
         	if (isInsideControl && currentToken.getType() == Token.DECLARE)
         		System.out.println("Error! Declare statements within control blocks are not allowed (line "
         				+ scanner.getLineNumber() + ")");
         	else if (isInsideControl && currentToken.getType() == Token.FUNCTION)
+        		System.out.println("Error! Functions cannot be defined within control blocks (line "
+        				+ scanner.getLineNumber() + ")");
+		*/
+		if (isInsideControl && currentToken.getType() == Token.FUNCTION)
         		System.out.println("Error! Functions cannot be defined within control blocks (line "
         				+ scanner.getLineNumber() + ")");
             statement();
